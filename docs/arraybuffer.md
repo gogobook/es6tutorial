@@ -1,38 +1,38 @@
 # ArrayBuffer
 
-`ArrayBuffer`对象、`TypedArray`视图和`DataView`视图是 JavaScript 操作二进制数据的一个接口。这些对象早就存在，属于独立的规格（2011 年 2 月发布），ES6 将它们纳入了 ECMAScript 规格，并且增加了新的方法。它们都是以数组的语法处理二进制数据，所以统称为二进制数组。
+`ArrayBuffer`物件、`TypedArray`視圖和`DataView`視圖是 JavaScript 操作二進制數據的一個接口。這些物件早就存在，屬於獨立的規格（2011 年 2 月發佈），ES6 將它們納入了 ECMAScript 規格，並且增加了新的方法。它們都是以陣列的語法處理二進制數據，所以統稱為二進制陣列。
 
-这个接口的原始设计目的，与 WebGL 项目有关。所谓 WebGL，就是指浏览器与显卡之间的通信接口，为了满足 JavaScript 与显卡之间大量的、实时的数据交换，它们之间的数据通信必须是二进制的，而不能是传统的文本格式。文本格式传递一个 32 位整数，两端的 JavaScript 脚本与显卡都要进行格式转化，将非常耗时。这时要是存在一种机制，可以像 C 语言那样，直接操作字节，将 4 个字节的 32 位整数，以二进制形式原封不动地送入显卡，脚本的性能就会大幅提升。
+這個接口的原始設計目的，與 WebGL 專案有關。所謂 WebGL，就是指瀏覽器與顯卡之間的通信接口，為了滿足 JavaScript 與顯卡之間大量的、實時的數據交換，它們之間的數據通信必須是二進制的，而不能是傳統的文本格式。文本格式傳遞一個 32 位整數，兩端的 JavaScript 腳本與顯卡都要進行格式轉化，將非常耗時。這時要是存在一種機制，可以像 C 語言那樣，直接操作字節，將 4 個字節的 32 位整數，以二進制形式原封不動地送入顯卡，腳本的性能就會大幅提升。
 
-二进制数组就是在这种背景下诞生的。它很像 C 语言的数组，允许开发者以数组下标的形式，直接操作内存，大大增强了 JavaScript 处理二进制数据的能力，使得开发者有可能通过 JavaScript 与操作系统的原生接口进行二进制通信。
+二進制陣列就是在這種背景下誕生的。它很像 C 語言的陣列，允許開發者以陣列下標的形式，直接操作內存，大大增強了 JavaScript 處理二進制數據的能力，使得開發者有可能通過 JavaScript 與操作系統的原生接口進行二進制通信。
 
-二进制数组由三类对象组成。
+二進制陣列由三類物件組成。
 
-**（1）`ArrayBuffer`对象**：代表内存之中的一段二进制数据，可以通过“视图”进行操作。“视图”部署了数组接口，这意味着，可以用数组的方法操作内存。
+**（1）`ArrayBuffer`物件**：代表內存之中的一段二進制數據，可以通過“視圖”進行操作。“視圖”部署了陣列接口，這意味著，可以用陣列的方法操作內存。
 
-**（2）`TypedArray`视图**：共包括 9 种类型的视图，比如`Uint8Array`（无符号 8 位整数）数组视图, `Int16Array`（16 位整数）数组视图, `Float32Array`（32 位浮点数）数组视图等等。
+**（2）`TypedArray`視圖**：共包括 9 種類型的視圖，比如`Uint8Array`（無符號 8 位整數）陣列視圖, `Int16Array`（16 位整數）陣列視圖, `Float32Array`（32 位浮點數）陣列視圖等等。
 
-**（3）`DataView`视图**：可以自定义复合格式的视图，比如第一个字节是 Uint8（无符号 8 位整数）、第二、三个字节是 Int16（16 位整数）、第四个字节开始是 Float32（32 位浮点数）等等，此外还可以自定义字节序。
+**（3）`DataView`視圖**：可以自定義復合格式的視圖，比如第一個字節是 Uint8（無符號 8 位整數）、第二、三個字節是 Int16（16 位整數）、第四個字節開始是 Float32（32 位浮點數）等等，此外還可以自定義字節序。
 
-简单说，`ArrayBuffer`对象代表原始的二进制数据，TypedArray 视图用来读写简单类型的二进制数据，`DataView`视图用来读写复杂类型的二进制数据。
+簡單說，`ArrayBuffer`物件代表原始的二進制數據，TypedArray 視圖用來讀寫簡單類型的二進制數據，`DataView`視圖用來讀寫複雜類型的二進制數據。
 
-TypedArray 视图支持的数据类型一共有 9 种（`DataView`视图支持除`Uint8C`以外的其他 8 种）。
+TypedArray 視圖支持的數據類型一共有 9 種（`DataView`視圖支持除`Uint8C`以外的其他 8 種）。
 
-| 数据类型 | 字节长度 | 含义                             | 对应的 C 语言类型 |
+| 數據類型 | 字節長度 | 含義                             | 對應的 C 語言類型 |
 | -------- | -------- | -------------------------------- | ----------------- |
-| Int8     | 1        | 8 位带符号整数                   | signed char       |
-| Uint8    | 1        | 8 位不带符号整数                 | unsigned char     |
-| Uint8C   | 1        | 8 位不带符号整数（自动过滤溢出） | unsigned char     |
-| Int16    | 2        | 16 位带符号整数                  | short             |
-| Uint16   | 2        | 16 位不带符号整数                | unsigned short    |
-| Int32    | 4        | 32 位带符号整数                  | int               |
-| Uint32   | 4        | 32 位不带符号的整数              | unsigned int      |
-| Float32  | 4        | 32 位浮点数                      | float             |
-| Float64  | 8        | 64 位浮点数                      | double            |
+| Int8     | 1        | 8 位帶符號整數                   | signed char       |
+| Uint8    | 1        | 8 位不帶符號整數                 | unsigned char     |
+| Uint8C   | 1        | 8 位不帶符號整數（自動過濾溢出） | unsigned char     |
+| Int16    | 2        | 16 位帶符號整數                  | short             |
+| Uint16   | 2        | 16 位不帶符號整數                | unsigned short    |
+| Int32    | 4        | 32 位帶符號整數                  | int               |
+| Uint32   | 4        | 32 位不帶符號的整數              | unsigned int      |
+| Float32  | 4        | 32 位浮點數                      | float             |
+| Float64  | 8        | 64 位浮點數                      | double            |
 
-注意，二进制数组并不是真正的数组，而是类似数组的对象。
+注意，二進制陣列並不是真正的陣列，而是類似陣列的物件。
 
-很多浏览器操作的 API，用到了二进制数组操作二进制数据，下面是其中的几个。
+很多瀏覽器操作的 API，用到了二進制陣列操作二進制數據，下面是其中的幾個。
 
 - File API
 - XMLHttpRequest
@@ -40,21 +40,21 @@ TypedArray 视图支持的数据类型一共有 9 种（`DataView`视图支持�
 - Canvas
 - WebSockets
 
-## ArrayBuffer 对象
+## ArrayBuffer 物件
 
 ### 概述
 
-`ArrayBuffer`对象代表储存二进制数据的一段内存，它不能直接读写，只能通过视图（`TypedArray`视图和`DataView`视图)来读写，视图的作用是以指定格式解读二进制数据。
+`ArrayBuffer`物件代表儲存二進制數據的一段內存，它不能直接讀寫，只能通過視圖（`TypedArray`視圖和`DataView`視圖)來讀寫，視圖的作用是以指定格式解讀二進制數據。
 
-`ArrayBuffer`也是一个构造函数，可以分配一段可以存放数据的连续内存区域。
+`ArrayBuffer`也是一個構造函數，可以分配一段可以存放數據的連續內存區域。
 
 ```javascript
 const buf = new ArrayBuffer(32);
 ```
 
-上面代码生成了一段 32 字节的内存区域，每个字节的值默认都是 0。可以看到，`ArrayBuffer`构造函数的参数是所需要的内存大小（单位字节）。
+上面代碼生成了一段 32 字節的內存區域，每個字節的值默認都是 0。可以看到，`ArrayBuffer`構造函數的參數是所需要的內存大小（單位字節）。
 
-为了读写这段内容，需要为它指定视图。`DataView`视图的创建，需要提供`ArrayBuffer`对象实例作为参数。
+為了讀寫這段內容，需要為它指定視圖。`DataView`視圖的創建，需要提供`ArrayBuffer`物件實例作為參數。
 
 ```javascript
 const buf = new ArrayBuffer(32);
@@ -62,9 +62,9 @@ const dataView = new DataView(buf);
 dataView.getUint8(0) // 0
 ```
 
-上面代码对一段 32 字节的内存，建立`DataView`视图，然后以不带符号的 8 位整数格式，从头读取 8 位二进制数据，结果得到 0，因为原始内存的`ArrayBuffer`对象，默认所有位都是 0。
+上面代碼對一段 32 字節的內存，建立`DataView`視圖，然後以不帶符號的 8 位整數格式，從頭讀取 8 位二進制數據，結果得到 0，因為原始內存的`ArrayBuffer`物件，默認所有位都是 0。
 
-另一种 TypedArray 视图，与`DataView`视图的一个区别是，它不是一个构造函数，而是一组构造函数，代表不同的数据格式。
+另一種 TypedArray 視圖，與`DataView`視圖的一個區別是，它不是一個構造函數，而是一組構造函數，代表不同的數據格式。
 
 ```javascript
 const buffer = new ArrayBuffer(12);
@@ -77,9 +77,9 @@ x2[0]  = 2;
 x1[0] // 2
 ```
 
-上面代码对同一段内存，分别建立两种视图：32 位带符号整数（`Int32Array`构造函数）和 8 位不带符号整数（`Uint8Array`构造函数）。由于两个视图对应的是同一段内存，一个视图修改底层内存，会影响到另一个视图。
+上面代碼對同一段內存，分別建立兩種視圖：32 位帶符號整數（`Int32Array`構造函數）和 8 位不帶符號整數（`Uint8Array`構造函數）。由於兩個視圖對應的是同一段內存，一個視圖修改底層內存，會影響到另一個視圖。
 
-TypedArray 视图的构造函数，除了接受`ArrayBuffer`实例作为参数，还可以接受普通数组作为参数，直接分配内存生成底层的`ArrayBuffer`实例，并同时完成对这段内存的赋值。
+TypedArray 視圖的構造函數，除了接受`ArrayBuffer`實例作為參數，還可以接受普通陣列作為參數，直接分配內存生成底層的`ArrayBuffer`實例，並同時完成對這段內存的賦值。
 
 ```javascript
 const typedArray = new Uint8Array([0,1,2]);
@@ -89,11 +89,11 @@ typedArray[0] = 5;
 typedArray // [5, 1, 2]
 ```
 
-上面代码使用 TypedArray 视图的`Uint8Array`构造函数，新建一个不带符号的 8 位整数视图。可以看到，`Uint8Array`直接使用普通数组作为参数，对底层内存的赋值同时完成。
+上面代碼使用 TypedArray 視圖的`Uint8Array`構造函數，新建一個不帶符號的 8 位整數視圖。可以看到，`Uint8Array`直接使用普通陣列作為參數，對底層內存的賦值同時完成。
 
 ### ArrayBuffer.prototype.byteLength
 
-`ArrayBuffer`实例的`byteLength`属性，返回所分配的内存区域的字节长度。
+`ArrayBuffer`實例的`byteLength`屬性，返回所分配的內存區域的字節長度。
 
 ```javascript
 const buffer = new ArrayBuffer(32);
@@ -101,34 +101,34 @@ buffer.byteLength
 // 32
 ```
 
-如果要分配的内存区域很大，有可能分配失败（因为没有那么多的连续空余内存），所以有必要检查是否分配成功。
+如果要分配的內存區域很大，有可能分配失敗（因為沒有那麼多的連續空餘內存），所以有必要檢查是否分配成功。
 
 ```javascript
 if (buffer.byteLength === n) {
   // 成功
 } else {
-  // 失败
+  // 失敗
 }
 ```
 
 ### ArrayBuffer.prototype.slice()
 
-`ArrayBuffer`实例有一个`slice`方法，允许将内存区域的一部分，拷贝生成一个新的`ArrayBuffer`对象。
+`ArrayBuffer`實例有一個`slice`方法，允許將內存區域的一部分，拷貝生成一個新的`ArrayBuffer`物件。
 
 ```javascript
 const buffer = new ArrayBuffer(8);
 const newBuffer = buffer.slice(0, 3);
 ```
 
-上面代码拷贝`buffer`对象的前 3 个字节（从 0 开始，到第 3 个字节前面结束），生成一个新的`ArrayBuffer`对象。`slice`方法其实包含两步，第一步是先分配一段新内存，第二步是将原来那个`ArrayBuffer`对象拷贝过去。
+上面代碼拷貝`buffer`物件的前 3 個字節（從 0 開始，到第 3 個字節前面結束），生成一個新的`ArrayBuffer`物件。`slice`方法其實包含兩步，第一步是先分配一段新內存，第二步是將原來那個`ArrayBuffer`物件拷貝過去。
 
-`slice`方法接受两个参数，第一个参数表示拷贝开始的字节序号（含该字节），第二个参数表示拷贝截止的字节序号（不含该字节）。如果省略第二个参数，则默认到原`ArrayBuffer`对象的结尾。
+`slice`方法接受兩個參數，第一個參數表示拷貝開始的字節序號（含該字節），第二個參數表示拷貝截止的字節序號（不含該字節）。如果省略第二個參數，則默認到原`ArrayBuffer`物件的結尾。
 
-除了`slice`方法，`ArrayBuffer`对象不提供任何直接读写内存的方法，只允许在其上方建立视图，然后通过视图读写。
+除了`slice`方法，`ArrayBuffer`物件不提供任何直接讀寫內存的方法，只允許在其上方建立視圖，然後通過視圖讀寫。
 
 ### ArrayBuffer.isView()
 
-`ArrayBuffer`有一个静态方法`isView`，返回一个布尔值，表示参数是否为`ArrayBuffer`的视图实例。这个方法大致相当于判断参数，是否为 TypedArray 实例或`DataView`实例。
+`ArrayBuffer`有一個靜態方法`isView`，返回一個布爾值，表示參數是否為`ArrayBuffer`的視圖實例。這個方法大致相當於判斷參數，是否為 TypedArray 實例或`DataView`實例。
 
 ```javascript
 const buffer = new ArrayBuffer(8);
@@ -138,66 +138,66 @@ const v = new Int32Array(buffer);
 ArrayBuffer.isView(v) // true
 ```
 
-## TypedArray 视图
+## TypedArray 視圖
 
 ### 概述
 
-`ArrayBuffer`对象作为内存区域，可以存放多种类型的数据。同一段内存，不同数据有不同的解读方式，这就叫做“视图”（view）。`ArrayBuffer`有两种视图，一种是 TypedArray 视图，另一种是`DataView`视图。前者的数组成员都是同一个数据类型，后者的数组成员可以是不同的数据类型。
+`ArrayBuffer`物件作為內存區域，可以存放多種類型的數據。同一段內存，不同數據有不同的解讀方式，這就叫做“視圖”（view）。`ArrayBuffer`有兩種視圖，一種是 TypedArray 視圖，另一種是`DataView`視圖。前者的陣列成員都是同一個數據類型，後者的陣列成員可以是不同的數據類型。
 
-目前，TypedArray 视图一共包括 9 种类型，每一种视图都是一种构造函数。
+目前，TypedArray 視圖一共包括 9 種類型，每一種視圖都是一種構造函數。
 
-- **`Int8Array`**：8 位有符号整数，长度 1 个字节。
-- **`Uint8Array`**：8 位无符号整数，长度 1 个字节。
-- **`Uint8ClampedArray`**：8 位无符号整数，长度 1 个字节，溢出处理不同。
-- **`Int16Array`**：16 位有符号整数，长度 2 个字节。
-- **`Uint16Array`**：16 位无符号整数，长度 2 个字节。
-- **`Int32Array`**：32 位有符号整数，长度 4 个字节。
-- **`Uint32Array`**：32 位无符号整数，长度 4 个字节。
-- **`Float32Array`**：32 位浮点数，长度 4 个字节。
-- **`Float64Array`**：64 位浮点数，长度 8 个字节。
+- **`Int8Array`**：8 位有符號整數，長度 1 個字節。
+- **`Uint8Array`**：8 位無符號整數，長度 1 個字節。
+- **`Uint8ClampedArray`**：8 位無符號整數，長度 1 個字節，溢出處理不同。
+- **`Int16Array`**：16 位有符號整數，長度 2 個字節。
+- **`Uint16Array`**：16 位無符號整數，長度 2 個字節。
+- **`Int32Array`**：32 位有符號整數，長度 4 個字節。
+- **`Uint32Array`**：32 位無符號整數，長度 4 個字節。
+- **`Float32Array`**：32 位浮點數，長度 4 個字節。
+- **`Float64Array`**：64 位浮點數，長度 8 個字節。
 
-这 9 个构造函数生成的数组，统称为 TypedArray 视图。它们很像普通数组，都有`length`属性，都能用方括号运算符（`[]`）获取单个元素，所有数组的方法，在它们上面都能使用。普通数组与 TypedArray 数组的差异主要在以下方面。
+這 9 個構造函數生成的陣列，統稱為 TypedArray 視圖。它們很像普通陣列，都有`length`屬性，都能用方括號運算符（`[]`）獲取單個元素，所有陣列的方法，在它們上面都能使用。普通陣列與 TypedArray 陣列的差異主要在以下方面。
 
-- TypedArray 数组的所有成员，都是同一种类型。
-- TypedArray 数组的成员是连续的，不会有空位。
-- TypedArray 数组成员的默认值为 0。比如，`new Array(10)`返回一个普通数组，里面没有任何成员，只是 10 个空位；`new Uint8Array(10)`返回一个 TypedArray 数组，里面 10 个成员都是 0。
-- TypedArray 数组只是一层视图，本身不储存数据，它的数据都储存在底层的`ArrayBuffer`对象之中，要获取底层对象必须使用`buffer`属性。
+- TypedArray 陣列的所有成員，都是同一種類型。
+- TypedArray 陣列的成員是連續的，不會有空位。
+- TypedArray 陣列成員的默認值為 0。比如，`new Array(10)`返回一個普通陣列，裡面沒有任何成員，只是 10 個空位；`new Uint8Array(10)`返回一個 TypedArray 陣列，裡面 10 個成員都是 0。
+- TypedArray 陣列只是一層視圖，本身不儲存數據，它的數據都儲存在底層的`ArrayBuffer`物件之中，要獲取底層物件必須使用`buffer`屬性。
 
-### 构造函数
+### 構造函數
 
-TypedArray 数组提供 9 种构造函数，用来生成相应类型的数组实例。
+TypedArray 陣列提供 9 種構造函數，用來生成相應類型的陣列實例。
 
-构造函数有多种用法。
+構造函數有多種用法。
 
 **（1）TypedArray(buffer, byteOffset=0, length?)**
 
-同一个`ArrayBuffer`对象之上，可以根据不同的数据类型，建立多个视图。
+同一個`ArrayBuffer`物件之上，可以根據不同的數據類型，建立多個視圖。
 
 ```javascript
-// 创建一个8字节的ArrayBuffer
+// 創建一個8字節的ArrayBuffer
 const b = new ArrayBuffer(8);
 
-// 创建一个指向b的Int32视图，开始于字节0，直到缓冲区的末尾
+// 創建一個指向b的Int32視圖，開始於字節0，直到緩衝區的末尾
 const v1 = new Int32Array(b);
 
-// 创建一个指向b的Uint8视图，开始于字节2，直到缓冲区的末尾
+// 創建一個指向b的Uint8視圖，開始於字節2，直到緩衝區的末尾
 const v2 = new Uint8Array(b, 2);
 
-// 创建一个指向b的Int16视图，开始于字节2，长度为2
+// 創建一個指向b的Int16視圖，開始於字節2，長度為2
 const v3 = new Int16Array(b, 2, 2);
 ```
 
-上面代码在一段长度为 8 个字节的内存（`b`）之上，生成了三个视图：`v1`、`v2`和`v3`。
+上面代碼在一段長度為 8 個字節的內存（`b`）之上，生成了三個視圖：`v1`、`v2`和`v3`。
 
-视图的构造函数可以接受三个参数：
+視圖的構造函數可以接受三個參數：
 
-- 第一个参数（必需）：视图对应的底层`ArrayBuffer`对象。
-- 第二个参数（可选）：视图开始的字节序号，默认从 0 开始。
-- 第三个参数（可选）：视图包含的数据个数，默认直到本段内存区域结束。
+- 第一個參數（必需）：視圖對應的底層`ArrayBuffer`物件。
+- 第二個參數（可選）：視圖開始的字節序號，默認從 0 開始。
+- 第三個參數（可選）：視圖包含的數據個數，默認直到本段內存區域結束。
 
-因此，`v1`、`v2`和`v3`是重叠的：`v1[0]`是一个 32 位整数，指向字节 0 ～字节 3；`v2[0]`是一个 8 位无符号整数，指向字节 2；`v3[0]`是一个 16 位整数，指向字节 2 ～字节 3。只要任何一个视图对内存有所修改，就会在另外两个视图上反应出来。
+因此，`v1`、`v2`和`v3`是重疊的：`v1[0]`是一個 32 位整數，指向字節 0 ～字節 3；`v2[0]`是一個 8 位無符號整數，指向字節 2；`v3[0]`是一個 16 位整數，指向字節 2 ～字節 3。只要任何一個視圖對內存有所修改，就會在另外兩個視圖上反應出來。
 
-注意，`byteOffset`必须与所要建立的数据类型一致，否则会报错。
+注意，`byteOffset`必須與所要建立的數據類型一致，否則會報錯。
 
 ```javascript
 const buffer = new ArrayBuffer(8);
@@ -205,13 +205,13 @@ const i16 = new Int16Array(buffer, 1);
 // Uncaught RangeError: start offset of Int16Array should be a multiple of 2
 ```
 
-上面代码中，新生成一个 8 个字节的`ArrayBuffer`对象，然后在这个对象的第一个字节，建立带符号的 16 位整数视图，结果报错。因为，带符号的 16 位整数需要两个字节，所以`byteOffset`参数必须能够被 2 整除。
+上面代碼中，新生成一個 8 個字節的`ArrayBuffer`物件，然後在這個物件的第一個字節，建立帶符號的 16 位整數視圖，結果報錯。因為，帶符號的 16 位整數需要兩個字節，所以`byteOffset`參數必須能夠被 2 整除。
 
-如果想从任意字节开始解读`ArrayBuffer`对象，必须使用`DataView`视图，因为 TypedArray 视图只提供 9 种固定的解读格式。
+如果想從任意字節開始解讀`ArrayBuffer`物件，必須使用`DataView`視圖，因為 TypedArray 視圖只提供 9 種固定的解讀格式。
 
 **（2）TypedArray(length)**
 
-视图还可以不通过`ArrayBuffer`对象，直接分配内存而生成。
+視圖還可以不通過`ArrayBuffer`物件，直接分配內存而生成。
 
 ```javascript
 const f64a = new Float64Array(8);
@@ -220,19 +220,19 @@ f64a[1] = 20;
 f64a[2] = f64a[0] + f64a[1];
 ```
 
-上面代码生成一个 8 个成员的`Float64Array`数组（共 64 字节），然后依次对每个成员赋值。这时，视图构造函数的参数就是成员的个数。可以看到，视图数组的赋值操作与普通数组的操作毫无两样。
+上面代碼生成一個 8 個成員的`Float64Array`陣列（共 64 字節），然後依次對每個成員賦值。這時，視圖構造函數的參數就是成員的個數。可以看到，視圖陣列的賦值操作與普通陣列的操作毫無兩樣。
 
 **（3）TypedArray(typedArray)**
 
-TypedArray 数组的构造函数，可以接受另一个 TypedArray 实例作为参数。
+TypedArray 陣列的構造函數，可以接受另一個 TypedArray 實例作為參數。
 
 ```javascript
 const typedArray = new Int8Array(new Uint8Array(4));
 ```
 
-上面代码中，`Int8Array`构造函数接受一个`Uint8Array`实例作为参数。
+上面代碼中，`Int8Array`構造函數接受一個`Uint8Array`實例作為參數。
 
-注意，此时生成的新数组，只是复制了参数数组的值，对应的底层内存是不一样的。新数组会开辟一段新的内存储存数据，不会在原数组的内存之上建立视图。
+注意，此時生成的新陣列，只是複製了參數陣列的值，對應的底層內存是不一樣的。新陣列會開闢一段新的內存儲存數據，不會在原陣列的內存之上建立視圖。
 
 ```javascript
 const x = new Int8Array([1, 1]);
@@ -244,9 +244,9 @@ x[0] = 2;
 y[0] // 1
 ```
 
-上面代码中，数组`y`是以数组`x`为模板而生成的，当`x`变动的时候，`y`并没有变动。
+上面代碼中，陣列`y`是以陣列`x`為模板而生成的，當`x`變動的時候，`y`並沒有變動。
 
-如果想基于同一段内存，构造不同的视图，可以采用下面的写法。
+如果想基於同一段內存，構造不同的視圖，可以採用下面的寫法。
 
 ```javascript
 const x = new Int8Array([1, 1]);
@@ -260,17 +260,17 @@ y[0] // 2
 
 **（4）TypedArray(arrayLikeObject)**
 
-构造函数的参数也可以是一个普通数组，然后直接生成 TypedArray 实例。
+構造函數的參數也可以是一個普通陣列，然後直接生成 TypedArray 實例。
 
 ```javascript
 const typedArray = new Uint8Array([1, 2, 3, 4]);
 ```
 
-注意，这时 TypedArray 视图会重新开辟内存，不会在原数组的内存上建立视图。
+注意，這時 TypedArray 視圖會重新開闢內存，不會在原陣列的內存上建立視圖。
 
-上面代码从一个普通的数组，生成一个 8 位无符号整数的 TypedArray 实例。
+上面代碼從一個普通的陣列，生成一個 8 位無符號整數的 TypedArray 實例。
 
-TypedArray 数组也可以转换回普通数组。
+TypedArray 陣列也可以轉換回普通陣列。
 
 ```javascript
 const normalArray = [...typedArray];
@@ -280,9 +280,9 @@ const normalArray = Array.from(typedArray);
 const normalArray = Array.prototype.slice.call(typedArray);
 ```
 
-### 数组方法
+### 陣列方法
 
-普通数组的操作方法和属性，对 TypedArray 数组完全适用。
+普通陣列的操作方法和屬性，對 TypedArray 陣列完全適用。
 
 - `TypedArray.prototype.copyWithin(target, start[, end = this.length])`
 - `TypedArray.prototype.entries()`
@@ -307,9 +307,9 @@ const normalArray = Array.prototype.slice.call(typedArray);
 - `TypedArray.prototype.toString()`
 - `TypedArray.prototype.values()`
 
-上面所有方法的用法，请参阅数组方法的介绍，这里不再重复了。
+上面所有方法的用法，請參閱陣列方法的介紹，這裡不再重複了。
 
-注意，TypedArray 数组没有`concat`方法。如果想要合并多个 TypedArray 数组，可以用下面这个函数。
+注意，TypedArray 陣列沒有`concat`方法。如果想要合併多個 TypedArray 陣列，可以用下面這個函數。
 
 ```javascript
 function concatenate(resultConstructor, ...arrays) {
@@ -330,7 +330,7 @@ concatenate(Uint8Array, Uint8Array.of(1, 2), Uint8Array.of(3, 4))
 // Uint8Array [1, 2, 3, 4]
 ```
 
-另外，TypedArray 数组与普通数组一样，部署了 Iterator 接口，所以可以被遍历。
+另外，TypedArray 陣列與普通陣列一樣，部署了 Iterator 接口，所以可以被遍歷。
 
 ```javascript
 let ui8 = Uint8Array.of(0, 1, 2);
@@ -342,9 +342,9 @@ for (let byte of ui8) {
 // 2
 ```
 
-### 字节序
+### 字節序
 
-字节序指的是数值在内存中的表示方式。
+字節序指的是數值在內存中的表示方式。
 
 ```javascript
 const buffer = new ArrayBuffer(16);
@@ -355,9 +355,9 @@ for (let i = 0; i < int32View.length; i++) {
 }
 ```
 
-上面代码生成一个 16 字节的`ArrayBuffer`对象，然后在它的基础上，建立了一个 32 位整数的视图。由于每个 32 位整数占据 4 个字节，所以一共可以写入 4 个整数，依次为 0，2，4，6。
+上面代碼生成一個 16 字節的`ArrayBuffer`物件，然後在它的基礎上，建立了一個 32 位整數的視圖。由於每個 32 位整數佔據 4 個字節，所以一共可以寫入 4 個整數，依次為 0，2，4，6。
 
-如果在这段数据上接着建立一个 16 位整数的视图，则可以读出完全不一样的结果。
+如果在這段數據上接著建立一個 16 位整數的視圖，則可以讀出完全不一樣的結果。
 
 ```javascript
 const int16View = new Int16Array(buffer);
@@ -375,16 +375,16 @@ for (let i = 0; i < int16View.length; i++) {
 // Entry 7: 0
 ```
 
-由于每个 16 位整数占据 2 个字节，所以整个`ArrayBuffer`对象现在分成 8 段。然后，由于 x86 体系的计算机都采用小端字节序（little endian），相对重要的字节排在后面的内存地址，相对不重要字节排在前面的内存地址，所以就得到了上面的结果。
+由於每個 16 位整數佔據 2 個字節，所以整個`ArrayBuffer`物件現在分成 8 段。然後，由於 x86 體系的計算機都採用小端字節序（little endian），相對重要的字節排在後面的內存地址，相對不重要字節排在前面的內存地址，所以就得到了上面的結果。
 
-比如，一个占据四个字节的 16 进制数`0x12345678`，决定其大小的最重要的字节是“12”，最不重要的是“78”。小端字节序将最不重要的字节排在前面，储存顺序就是`78563412`；大端字节序则完全相反，将最重要的字节排在前面，储存顺序就是`12345678`。目前，所有个人电脑几乎都是小端字节序，所以 TypedArray 数组内部也采用小端字节序读写数据，或者更准确的说，按照本机操作系统设定的字节序读写数据。
+比如，一個佔據四個字節的 16 進制數`0x12345678`，決定其大小的最重要的字節是“12”，最不重要的是“78”。小端字節序將最不重要的字節排在前面，儲存順序就是`78563412`；大端字節序則完全相反，將最重要的字節排在前面，儲存順序就是`12345678`。目前，所有個人電腦幾乎都是小端字節序，所以 TypedArray 陣列內部也採用小端字節序讀寫數據，或者更準確的說，按照本機操作系統設定的字節序讀寫數據。
 
-这并不意味大端字节序不重要，事实上，很多网络设备和特定的操作系统采用的是大端字节序。这就带来一个严重的问题：如果一段数据是大端字节序，TypedArray 数组将无法正确解析，因为它只能处理小端字节序！为了解决这个问题，JavaScript 引入`DataView`对象，可以设定字节序，下文会详细介绍。
+這並不意味大端字節序不重要，事實上，很多網絡設備和特定的操作系統採用的是大端字節序。這就帶來一個嚴重的問題：如果一段數據是大端字節序，TypedArray 陣列將無法正確解析，因為它只能處理小端字節序！為瞭解決這個問題，JavaScript 引入`DataView`物件，可以設定字節序，下文會詳細介紹。
 
-下面是另一个例子。
+下面是另一個例子。
 
 ```javascript
-// 假定某段buffer包含如下字节 [0x02, 0x01, 0x03, 0x07]
+// 假定某段buffer包含如下字節 [0x02, 0x01, 0x03, 0x07]
 const buffer = new ArrayBuffer(4);
 const v1 = new Uint8Array(buffer);
 v1[0] = 2;
@@ -394,19 +394,19 @@ v1[3] = 7;
 
 const uInt16View = new Uint16Array(buffer);
 
-// 计算机采用小端字节序
-// 所以头两个字节等于258
+// 計算機採用小端字節序
+// 所以頭兩個字節等於258
 if (uInt16View[0] === 258) {
   console.log('OK'); // "OK"
 }
 
-// 赋值运算
-uInt16View[0] = 255;    // 字节变为[0xFF, 0x00, 0x03, 0x07]
-uInt16View[0] = 0xff05; // 字节变为[0x05, 0xFF, 0x03, 0x07]
-uInt16View[1] = 0x0210; // 字节变为[0x05, 0xFF, 0x10, 0x02]
+// 賦值運算
+uInt16View[0] = 255;    // 字節變為[0xFF, 0x00, 0x03, 0x07]
+uInt16View[0] = 0xff05; // 字節變為[0x05, 0xFF, 0x03, 0x07]
+uInt16View[1] = 0x0210; // 字節變為[0x05, 0xFF, 0x10, 0x02]
 ```
 
-下面的函数可以用来判断，当前视图是小端字节序，还是大端字节序。
+下面的函數可以用來判斷，當前視圖是小端字節序，還是大端字節序。
 
 ```javascript
 const BIG_ENDIAN = Symbol('BIG_ENDIAN');
@@ -426,11 +426,11 @@ function getPlatformEndianness() {
 }
 ```
 
-总之，与普通数组相比，TypedArray 数组的最大优点就是可以直接操作内存，不需要数据类型转换，所以速度快得多。
+總之，與普通陣列相比，TypedArray 陣列的最大優點就是可以直接操作內存，不需要數據類型轉換，所以速度快得多。
 
-### BYTES_PER_ELEMENT 属性
+### BYTES_PER_ELEMENT 屬性
 
-每一种视图的构造函数，都有一个`BYTES_PER_ELEMENT`属性，表示这种数据类型占据的字节数。
+每一種視圖的構造函數，都有一個`BYTES_PER_ELEMENT`屬性，表示這種數據類型佔據的字節數。
 
 ```javascript
 Int8Array.BYTES_PER_ELEMENT // 1
@@ -443,17 +443,17 @@ Float32Array.BYTES_PER_ELEMENT // 4
 Float64Array.BYTES_PER_ELEMENT // 8
 ```
 
-这个属性在 TypedArray 实例上也能获取，即有`TypedArray.prototype.BYTES_PER_ELEMENT`。
+這個屬性在 TypedArray 實例上也能獲取，即有`TypedArray.prototype.BYTES_PER_ELEMENT`。
 
-### ArrayBuffer 与字符串的互相转换
+### ArrayBuffer 與字符串的互相轉換
 
-`ArrayBuffer`转为字符串，或者字符串转为`ArrayBuffer`，有一个前提，即字符串的编码方法是确定的。假定字符串采用 UTF-16 编码（JavaScript 的内部编码方式），可以自己编写转换函数。
+`ArrayBuffer`轉為字符串，或者字符串轉為`ArrayBuffer`，有一個前提，即字符串的編碼方法是確定的。假定字符串採用 UTF-16 編碼（JavaScript 的內部編碼方式），可以自己編寫轉換函數。
 
 ```javascript
-// ArrayBuffer 转为字符串，参数为 ArrayBuffer 对象
+// ArrayBuffer 轉為字符串，參數為 ArrayBuffer 物件
 function ab2str(buf) {
-  // 注意，如果是大型二进制数组，为了避免溢出，
-  // 必须一个一个字符地转
+  // 注意，如果是大型二進制陣列，為了避免溢出，
+  // 必須一個一個字符地轉
   if (buf && buf.byteLength < 1024) {
     return String.fromCharCode.apply(null, new Uint16Array(buf));
   }
@@ -467,9 +467,9 @@ function ab2str(buf) {
   return bstr.join('');
 }
 
-// 字符串转为 ArrayBuffer 对象，参数为字符串
+// 字符串轉為 ArrayBuffer 物件，參數為字符串
 function str2ab(str) {
-  const buf = new ArrayBuffer(str.length * 2); // 每个字符占用2个字节
+  const buf = new ArrayBuffer(str.length * 2); // 每個字符佔用2個字節
   const bufView = new Uint16Array(buf);
   for (let i = 0, strLen = str.length; i < strLen; i++) {
     bufView[i] = str.charCodeAt(i);
@@ -480,9 +480,9 @@ function str2ab(str) {
 
 ### 溢出
 
-不同的视图类型，所能容纳的数值范围是确定的。超出这个范围，就会出现溢出。比如，8 位视图只能容纳一个 8 位的二进制值，如果放入一个 9 位的值，就会溢出。
+不同的視圖類型，所能容納的數值範圍是確定的。超出這個範圍，就會出現溢出。比如，8 位視圖只能容納一個 8 位的二進制值，如果放入一個 9 位的值，就會溢出。
 
-TypedArray 数组的溢出处理规则，简单来说，就是抛弃溢出的位，然后按照视图类型进行解释。
+TypedArray 陣列的溢出處理規則，簡單來說，就是拋棄溢出的位，然後按照視圖類型進行解釋。
 
 ```javascript
 const uint8 = new Uint8Array(1);
@@ -494,25 +494,25 @@ uint8[0] = -1;
 uint8[0] // 255
 ```
 
-上面代码中，`uint8`是一个 8 位视图，而 256 的二进制形式是一个 9 位的值`100000000`，这时就会发生溢出。根据规则，只会保留后 8 位，即`00000000`。`uint8`视图的解释规则是无符号的 8 位整数，所以`00000000`就是`0`。
+上面代碼中，`uint8`是一個 8 位視圖，而 256 的二進制形式是一個 9 位的值`100000000`，這時就會發生溢出。根據規則，只會保留後 8 位，即`00000000`。`uint8`視圖的解釋規則是無符號的 8 位整數，所以`00000000`就是`0`。
 
-负数在计算机内部采用“2 的补码”表示，也就是说，将对应的正数值进行否运算，然后加`1`。比如，`-1`对应的正值是`1`，进行否运算以后，得到`11111110`，再加上`1`就是补码形式`11111111`。`uint8`按照无符号的 8 位整数解释`11111111`，返回结果就是`255`。
+負數在計算機內部採用“2 的補碼”表示，也就是說，將對應的正數值進行否運算，然後加`1`。比如，`-1`對應的正值是`1`，進行否運算以後，得到`11111110`，再加上`1`就是補碼形式`11111111`。`uint8`按照無符號的 8 位整數解釋`11111111`，返回結果就是`255`。
 
-一个简单转换规则，可以这样表示。
+一個簡單轉換規則，可以這樣表示。
 
-- 正向溢出（overflow）：当输入值大于当前数据类型的最大值，结果等于当前数据类型的最小值加上余值，再减去 1。
-- 负向溢出（underflow）：当输入值小于当前数据类型的最小值，结果等于当前数据类型的最大值减去余值，再加上 1。
+- 正向溢出（overflow）：當輸入值大於當前數據類型的最大值，結果等於當前數據類型的最小值加上余值，再減去 1。
+- 負向溢出（underflow）：當輸入值小於當前數據類型的最小值，結果等於當前數據類型的最大值減去余值，再加上 1。
 
-上面的“余值”就是模运算的结果，即 JavaScript 里面的`%`运算符的结果。
+上面的“余值”就是模運算的結果，即 JavaScript 裡面的`%`運算符的結果。
 
 ```javascript
 12 % 4 // 0
 12 % 5 // 2
 ```
 
-上面代码中，12 除以 4 是没有余值的，而除以 5 会得到余值 2。
+上面代碼中，12 除以 4 是沒有餘值的，而除以 5 會得到余值 2。
 
-请看下面的例子。
+請看下面的例子。
 
 ```javascript
 const int8 = new Int8Array(1);
@@ -524,9 +524,9 @@ int8[0] = -129;
 int8[0] // 127
 ```
 
-上面例子中，`int8`是一个带符号的 8 位整数视图，它的最大值是 127，最小值是-128。输入值为`128`时，相当于正向溢出`1`，根据“最小值加上余值（128 除以 127 的余值是 1），再减去 1”的规则，就会返回`-128`；输入值为`-129`时，相当于负向溢出`1`，根据“最大值减去余值（-129 除以-128 的余值是 1），再加上 1”的规则，就会返回`127`。
+上面例子中，`int8`是一個帶符號的 8 位整數視圖，它的最大值是 127，最小值是-128。輸入值為`128`時，相當於正向溢出`1`，根據“最小值加上余值（128 除以 127 的余值是 1），再減去 1”的規則，就會返回`-128`；輸入值為`-129`時，相當於負向溢出`1`，根據“最大值減去余值（-129 除以-128 的余值是 1），再加上 1”的規則，就會返回`127`。
 
-`Uint8ClampedArray`视图的溢出规则，与上面的规则不同。它规定，凡是发生正向溢出，该值一律等于当前数据类型的最大值，即 255；如果发生负向溢出，该值一律等于当前数据类型的最小值，即 0。
+`Uint8ClampedArray`視圖的溢出規則，與上面的規則不同。它規定，凡是發生正向溢出，該值一律等於當前數據類型的最大值，即 255；如果發生負向溢出，該值一律等於當前數據類型的最小值，即 0。
 
 ```javascript
 const uint8c = new Uint8ClampedArray(1);
@@ -538,22 +538,22 @@ uint8c[0] = -1;
 uint8c[0] // 0
 ```
 
-上面例子中，`uint8C`是一个`Uint8ClampedArray`视图，正向溢出时都返回 255，负向溢出都返回 0。
+上面例子中，`uint8C`是一個`Uint8ClampedArray`視圖，正向溢出時都返回 255，負向溢出都返回 0。
 
 ### TypedArray.prototype.buffer
 
-TypedArray 实例的`buffer`属性，返回整段内存区域对应的`ArrayBuffer`对象。该属性为只读属性。
+TypedArray 實例的`buffer`屬性，返回整段內存區域對應的`ArrayBuffer`物件。該屬性為只讀屬性。
 
 ```javascript
 const a = new Float32Array(64);
 const b = new Uint8Array(a.buffer);
 ```
 
-上面代码的`a`视图对象和`b`视图对象，对应同一个`ArrayBuffer`对象，即同一段内存。
+上面代碼的`a`視圖物件和`b`視圖物件，對應同一個`ArrayBuffer`物件，即同一段內存。
 
 ### TypedArray.prototype.byteLength，TypedArray.prototype.byteOffset
 
-`byteLength`属性返回 TypedArray 数组占据的内存长度，单位为字节。`byteOffset`属性返回 TypedArray 数组从底层`ArrayBuffer`对象的哪个字节开始。这两个属性都是只读属性。
+`byteLength`屬性返回 TypedArray 陣列佔據的內存長度，單位為字節。`byteOffset`屬性返回 TypedArray 陣列從底層`ArrayBuffer`物件的哪個字節開始。這兩個屬性都是只讀屬性。
 
 ```javascript
 const b = new ArrayBuffer(8);
@@ -573,7 +573,7 @@ v3.byteOffset // 2
 
 ### TypedArray.prototype.length
 
-`length`属性表示 TypedArray 数组含有多少个成员。注意将`byteLength`属性和`length`属性区分，前者是字节长度，后者是成员长度。
+`length`屬性表示 TypedArray 陣列含有多少個成員。注意將`byteLength`屬性和`length`屬性區分，前者是字節長度，後者是成員長度。
 
 ```javascript
 const a = new Int16Array(8);
@@ -584,7 +584,7 @@ a.byteLength // 16
 
 ### TypedArray.prototype.set()
 
-TypedArray 数组的`set`方法用于复制数组（普通数组或 TypedArray 数组），也就是将一段内容完全复制到另一段内存。
+TypedArray 陣列的`set`方法用於複製陣列（普通陣列或 TypedArray 陣列），也就是將一段內容完全複製到另一段內存。
 
 ```javascript
 const a = new Uint8Array(8);
@@ -593,9 +593,9 @@ const b = new Uint8Array(8);
 b.set(a);
 ```
 
-上面代码复制`a`数组的内容到`b`数组，它是整段内存的复制，比一个个拷贝成员的那种复制快得多。
+上面代碼複製`a`陣列的內容到`b`陣列，它是整段內存的複製，比一個個拷貝成員的那種複製快得多。
 
-`set`方法还可以接受第二个参数，表示从`b`对象的哪一个成员开始复制`a`对象。
+`set`方法還可以接受第二個參數，表示從`b`物件的哪一個成員開始複製`a`物件。
 
 ```javascript
 const a = new Uint16Array(8);
@@ -604,11 +604,11 @@ const b = new Uint16Array(10);
 b.set(a, 2)
 ```
 
-上面代码的`b`数组比`a`数组多两个成员，所以从`b[2]`开始复制。
+上面代碼的`b`陣列比`a`陣列多兩個成員，所以從`b[2]`開始複製。
 
 ### TypedArray.prototype.subarray()
 
-`subarray`方法是对于 TypedArray 数组的一部分，再建立一个新的视图。
+`subarray`方法是對於 TypedArray 陣列的一部分，再建立一個新的視圖。
 
 ```javascript
 const a = new Uint16Array(8);
@@ -618,11 +618,11 @@ a.byteLength // 16
 b.byteLength // 2
 ```
 
-`subarray`方法的第一个参数是起始的成员序号，第二个参数是结束的成员序号（不含该成员），如果省略则包含剩余的全部成员。所以，上面代码的`a.subarray(2,3)`，意味着 b 只包含`a[2]`一个成员，字节长度为 2。
+`subarray`方法的第一個參數是起始的成員序號，第二個參數是結束的成員序號（不含該成員），如果省略則包含剩餘的全部成員。所以，上面代碼的`a.subarray(2,3)`，意味著 b 只包含`a[2]`一個成員，字節長度為 2。
 
 ### TypedArray.prototype.slice()
 
-TypeArray 实例的`slice`方法，可以返回一个指定位置的新的 TypedArray 实例。
+TypeArray 實例的`slice`方法，可以返回一個指定位置的新的 TypedArray 實例。
 
 ```javascript
 let ui8 = Uint8Array.of(0, 1, 2);
@@ -630,20 +630,20 @@ ui8.slice(-1)
 // Uint8Array [ 2 ]
 ```
 
-上面代码中，`ui8`是 8 位无符号整数数组视图的一个实例。它的`slice`方法可以从当前视图之中，返回一个新的视图实例。
+上面代碼中，`ui8`是 8 位無符號整數陣列視圖的一個實例。它的`slice`方法可以從當前視圖之中，返回一個新的視圖實例。
 
-`slice`方法的参数，表示原数组的具体位置，开始生成新数组。负值表示逆向的位置，即-1 为倒数第一个位置，-2 表示倒数第二个位置，以此类推。
+`slice`方法的參數，表示原陣列的具體位置，開始生成新陣列。負值表示逆向的位置，即-1 為倒數第一個位置，-2 表示倒數第二個位置，以此類推。
 
 ### TypedArray.of()
 
-TypedArray 数组的所有构造函数，都有一个静态方法`of`，用于将参数转为一个 TypedArray 实例。
+TypedArray 陣列的所有構造函數，都有一個靜態方法`of`，用於將參數轉為一個 TypedArray 實例。
 
 ```javascript
 Float32Array.of(0.151, -8, 3.7)
 // Float32Array [ 0.151, -8, 3.7 ]
 ```
 
-下面三种方法都会生成同样一个 TypedArray 数组。
+下面三種方法都會生成同樣一個 TypedArray 陣列。
 
 ```javascript
 // 方法一
@@ -661,21 +661,21 @@ tarr[2] = 3;
 
 ### TypedArray.from()
 
-静态方法`from`接受一个可遍历的数据结构（比如数组）作为参数，返回一个基于这个结构的 TypedArray 实例。
+靜態方法`from`接受一個可遍歷的數據結構（比如陣列）作為參數，返回一個基於這個結構的 TypedArray 實例。
 
 ```javascript
 Uint16Array.from([0, 1, 2])
 // Uint16Array [ 0, 1, 2 ]
 ```
 
-这个方法还可以将一种 TypedArray 实例，转为另一种。
+這個方法還可以將一種 TypedArray 實例，轉為另一種。
 
 ```javascript
 const ui16 = Uint16Array.from(Uint8Array.of(0, 1, 2));
 ui16 instanceof Uint16Array // true
 ```
 
-`from`方法还可以接受一个函数，作为第二个参数，用来对每个元素进行遍历，功能类似`map`方法。
+`from`方法還可以接受一個函數，作為第二個參數，用來對每個元素進行遍歷，功能類似`map`方法。
 
 ```javascript
 Int8Array.of(127, 126, 125).map(x => 2 * x)
@@ -685,11 +685,11 @@ Int16Array.from(Int8Array.of(127, 126, 125), x => 2 * x)
 // Int16Array [ 254, 252, 250 ]
 ```
 
-上面的例子中，`from`方法没有发生溢出，这说明遍历不是针对原来的 8 位整数数组。也就是说，`from`会将第一个参数指定的 TypedArray 数组，拷贝到另一段内存之中，处理之后再将结果转成指定的数组格式。
+上面的例子中，`from`方法沒有發生溢出，這說明遍歷不是針對原來的 8 位整數陣列。也就是說，`from`會將第一個參數指定的 TypedArray 陣列，拷貝到另一段內存之中，處理之後再將結果轉成指定的陣列格式。
 
-## 复合视图
+## 復合視圖
 
-由于视图的构造函数可以指定起始位置和长度，所以在同一段内存之中，可以依次存放不同类型的数据，这叫做“复合视图”。
+由於視圖的構造函數可以指定起始位置和長度，所以在同一段內存之中，可以依次存放不同類型的數據，這叫做“復合視圖”。
 
 ```javascript
 const buffer = new ArrayBuffer(24);
@@ -699,13 +699,13 @@ const usernameView = new Uint8Array(buffer, 4, 16);
 const amountDueView = new Float32Array(buffer, 20, 1);
 ```
 
-上面代码将一个 24 字节长度的`ArrayBuffer`对象，分成三个部分：
+上面代碼將一個 24 字節長度的`ArrayBuffer`物件，分成三個部分：
 
-- 字节 0 到字节 3：1 个 32 位无符号整数
-- 字节 4 到字节 19：16 个 8 位整数
-- 字节 20 到字节 23：1 个 32 位浮点数
+- 字節 0 到字節 3：1 個 32 位無符號整數
+- 字節 4 到字節 19：16 個 8 位整數
+- 字節 20 到字節 23：1 個 32 位浮點數
 
-这种数据结构可以用如下的 C 语言描述：
+這種數據結構可以用如下的 C 語言描述：
 
 ```c
 struct someStruct {
@@ -715,98 +715,98 @@ struct someStruct {
 };
 ```
 
-## DataView 视图
+## DataView 視圖
 
-如果一段数据包括多种类型（比如服务器传来的 HTTP 数据），这时除了建立`ArrayBuffer`对象的复合视图以外，还可以通过`DataView`视图进行操作。
+如果一段數據包括多種類型（比如服務器傳來的 HTTP 數據），這時除了建立`ArrayBuffer`物件的復合視圖以外，還可以通過`DataView`視圖進行操作。
 
-`DataView`视图提供更多操作选项，而且支持设定字节序。本来，在设计目的上，`ArrayBuffer`对象的各种 TypedArray 视图，是用来向网卡、声卡之类的本机设备传送数据，所以使用本机的字节序就可以了；而`DataView`视图的设计目的，是用来处理网络设备传来的数据，所以大端字节序或小端字节序是可以自行设定的。
+`DataView`視圖提供更多操作選項，而且支持設定字節序。本來，在設計目的上，`ArrayBuffer`物件的各種 TypedArray 視圖，是用來向網卡、聲卡之類的本機設備傳送數據，所以使用本機的字節序就可以了；而`DataView`視圖的設計目的，是用來處理網絡設備傳來的數據，所以大端字節序或小端字節序是可以自行設定的。
 
-`DataView`视图本身也是构造函数，接受一个`ArrayBuffer`对象作为参数，生成视图。
+`DataView`視圖本身也是構造函數，接受一個`ArrayBuffer`物件作為參數，生成視圖。
 
 ```javascript
-DataView(ArrayBuffer buffer [, 字节起始位置 [, 长度]]);
+DataView(ArrayBuffer buffer [, 字節起始位置 [, 長度]]);
 ```
 
-下面是一个例子。
+下面是一個例子。
 
 ```javascript
 const buffer = new ArrayBuffer(24);
 const dv = new DataView(buffer);
 ```
 
-`DataView`实例有以下属性，含义与 TypedArray 实例的同名方法相同。
+`DataView`實例有以下屬性，含義與 TypedArray 實例的同名方法相同。
 
-- `DataView.prototype.buffer`：返回对应的 ArrayBuffer 对象
-- `DataView.prototype.byteLength`：返回占据的内存字节长度
-- `DataView.prototype.byteOffset`：返回当前视图从对应的 ArrayBuffer 对象的哪个字节开始
+- `DataView.prototype.buffer`：返回對應的 ArrayBuffer 物件
+- `DataView.prototype.byteLength`：返回佔據的內存字節長度
+- `DataView.prototype.byteOffset`：返回當前視圖從對應的 ArrayBuffer 物件的哪個字節開始
 
-`DataView`实例提供 8 个方法读取内存。
+`DataView`實例提供 8 個方法讀取內存。
 
-- **`getInt8`**：读取 1 个字节，返回一个 8 位整数。
-- **`getUint8`**：读取 1 个字节，返回一个无符号的 8 位整数。
-- **`getInt16`**：读取 2 个字节，返回一个 16 位整数。
-- **`getUint16`**：读取 2 个字节，返回一个无符号的 16 位整数。
-- **`getInt32`**：读取 4 个字节，返回一个 32 位整数。
-- **`getUint32`**：读取 4 个字节，返回一个无符号的 32 位整数。
-- **`getFloat32`**：读取 4 个字节，返回一个 32 位浮点数。
-- **`getFloat64`**：读取 8 个字节，返回一个 64 位浮点数。
+- **`getInt8`**：讀取 1 個字節，返回一個 8 位整數。
+- **`getUint8`**：讀取 1 個字節，返回一個無符號的 8 位整數。
+- **`getInt16`**：讀取 2 個字節，返回一個 16 位整數。
+- **`getUint16`**：讀取 2 個字節，返回一個無符號的 16 位整數。
+- **`getInt32`**：讀取 4 個字節，返回一個 32 位整數。
+- **`getUint32`**：讀取 4 個字節，返回一個無符號的 32 位整數。
+- **`getFloat32`**：讀取 4 個字節，返回一個 32 位浮點數。
+- **`getFloat64`**：讀取 8 個字節，返回一個 64 位浮點數。
 
-这一系列`get`方法的参数都是一个字节序号（不能是负数，否则会报错），表示从哪个字节开始读取。
+這一系列`get`方法的參數都是一個字節序號（不能是負數，否則會報錯），表示從哪個字節開始讀取。
 
 ```javascript
 const buffer = new ArrayBuffer(24);
 const dv = new DataView(buffer);
 
-// 从第1个字节读取一个8位无符号整数
+// 從第1個字節讀取一個8位無符號整數
 const v1 = dv.getUint8(0);
 
-// 从第2个字节读取一个16位无符号整数
+// 從第2個字節讀取一個16位無符號整數
 const v2 = dv.getUint16(1);
 
-// 从第4个字节读取一个16位无符号整数
+// 從第4個字節讀取一個16位無符號整數
 const v3 = dv.getUint16(3);
 ```
 
-上面代码读取了`ArrayBuffer`对象的前 5 个字节，其中有一个 8 位整数和两个十六位整数。
+上面代碼讀取了`ArrayBuffer`物件的前 5 個字節，其中有一個 8 位整數和兩個十六位整數。
 
-如果一次读取两个或两个以上字节，就必须明确数据的存储方式，到底是小端字节序还是大端字节序。默认情况下，`DataView`的`get`方法使用大端字节序解读数据，如果需要使用小端字节序解读，必须在`get`方法的第二个参数指定`true`。
+如果一次讀取兩個或兩個以上字節，就必須明確數據的存儲方式，到底是小端字節序還是大端字節序。默認情況下，`DataView`的`get`方法使用大端字節序解讀數據，如果需要使用小端字節序解讀，必須在`get`方法的第二個參數指定`true`。
 
 ```javascript
-// 小端字节序
+// 小端字節序
 const v1 = dv.getUint16(1, true);
 
-// 大端字节序
+// 大端字節序
 const v2 = dv.getUint16(3, false);
 
-// 大端字节序
+// 大端字節序
 const v3 = dv.getUint16(3);
 ```
 
-DataView 视图提供 8 个方法写入内存。
+DataView 視圖提供 8 個方法寫入內存。
 
-- **`setInt8`**：写入 1 个字节的 8 位整数。
-- **`setUint8`**：写入 1 个字节的 8 位无符号整数。
-- **`setInt16`**：写入 2 个字节的 16 位整数。
-- **`setUint16`**：写入 2 个字节的 16 位无符号整数。
-- **`setInt32`**：写入 4 个字节的 32 位整数。
-- **`setUint32`**：写入 4 个字节的 32 位无符号整数。
-- **`setFloat32`**：写入 4 个字节的 32 位浮点数。
-- **`setFloat64`**：写入 8 个字节的 64 位浮点数。
+- **`setInt8`**：寫入 1 個字節的 8 位整數。
+- **`setUint8`**：寫入 1 個字節的 8 位無符號整數。
+- **`setInt16`**：寫入 2 個字節的 16 位整數。
+- **`setUint16`**：寫入 2 個字節的 16 位無符號整數。
+- **`setInt32`**：寫入 4 個字節的 32 位整數。
+- **`setUint32`**：寫入 4 個字節的 32 位無符號整數。
+- **`setFloat32`**：寫入 4 個字節的 32 位浮點數。
+- **`setFloat64`**：寫入 8 個字節的 64 位浮點數。
 
-这一系列`set`方法，接受两个参数，第一个参数是字节序号，表示从哪个字节开始写入，第二个参数为写入的数据。对于那些写入两个或两个以上字节的方法，需要指定第三个参数，`false`或者`undefined`表示使用大端字节序写入，`true`表示使用小端字节序写入。
+這一系列`set`方法，接受兩個參數，第一個參數是字節序號，表示從哪個字節開始寫入，第二個參數為寫入的數據。對於那些寫入兩個或兩個以上字節的方法，需要指定第三個參數，`false`或者`undefined`表示使用大端字節序寫入，`true`表示使用小端字節序寫入。
 
 ```javascript
-// 在第1个字节，以大端字节序写入值为25的32位整数
+// 在第1個字節，以大端字節序寫入值為25的32位整數
 dv.setInt32(0, 25, false);
 
-// 在第5个字节，以大端字节序写入值为25的32位整数
+// 在第5個字節，以大端字節序寫入值為25的32位整數
 dv.setInt32(4, 25);
 
-// 在第9个字节，以小端字节序写入值为2.5的32位浮点数
+// 在第9個字節，以小端字節序寫入值為2.5的32位浮點數
 dv.setFloat32(8, 2.5, true);
 ```
 
-如果不确定正在使用的计算机的字节序，可以采用下面的判断方式。
+如果不確定正在使用的計算機的字節序，可以採用下面的判斷方式。
 
 ```javascript
 const littleEndian = (function() {
@@ -816,15 +816,15 @@ const littleEndian = (function() {
 })();
 ```
 
-如果返回`true`，就是小端字节序；如果返回`false`，就是大端字节序。
+如果返回`true`，就是小端字節序；如果返回`false`，就是大端字節序。
 
-## 二进制数组的应用
+## 二進制陣列的應用
 
-大量的 Web API 用到了`ArrayBuffer`对象和它的视图对象。
+大量的 Web API 用到了`ArrayBuffer`物件和它的視圖物件。
 
 ### AJAX
 
-传统上，服务器通过 AJAX 操作只能返回文本数据，即`responseType`属性默认为`text`。`XMLHttpRequest`第二版`XHR2`允许服务器返回二进制数据，这时分成两种情况。如果明确知道返回的二进制数据类型，可以把返回类型（`responseType`）设为`arraybuffer`；如果不知道，就设为`blob`。
+傳統上，服務器通過 AJAX 操作只能返回文本數據，即`responseType`屬性默認為`text`。`XMLHttpRequest`第二版`XHR2`允許服務器返回二進制數據，這時分成兩種情況。如果明確知道返回的二進制數據類型，可以把返回類型（`responseType`）設為`arraybuffer`；如果不知道，就設為`blob`。
 
 ```javascript
 let xhr = new XMLHttpRequest();
@@ -839,7 +839,7 @@ xhr.onload = function () {
 xhr.send();
 ```
 
-如果知道传回来的是 32 位整数，可以像下面这样处理。
+如果知道傳回來的是 32 位整數，可以像下面這樣處理。
 
 ```javascript
 xhr.onreadystatechange = function () {
@@ -856,7 +856,7 @@ xhr.onreadystatechange = function () {
 
 ### Canvas
 
-网页`Canvas`元素输出的二进制像素数据，就是 TypedArray 数组。
+網頁`Canvas`元素輸出的二進制像素數據，就是 TypedArray 陣列。
 
 ```javascript
 const canvas = document.getElementById('myCanvas');
@@ -866,25 +866,25 @@ const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 const uint8ClampedArray = imageData.data;
 ```
 
-需要注意的是，上面代码的`uint8ClampedArray`虽然是一个 TypedArray 数组，但是它的视图类型是一种针对`Canvas`元素的专有类型`Uint8ClampedArray`。这个视图类型的特点，就是专门针对颜色，把每个字节解读为无符号的 8 位整数，即只能取值 0 ～ 255，而且发生运算的时候自动过滤高位溢出。这为图像处理带来了巨大的方便。
+需要注意的是，上面代碼的`uint8ClampedArray`雖然是一個 TypedArray 陣列，但是它的視圖類型是一種針對`Canvas`元素的專有類型`Uint8ClampedArray`。這個視圖類型的特點，就是專門針對顏色，把每個字節解讀為無符號的 8 位整數，即只能取值 0 ～ 255，而且發生運算的時候自動過濾高位溢出。這為圖像處理帶來了巨大的方便。
 
-举例来说，如果把像素的颜色值设为`Uint8Array`类型，那么乘以一个 gamma 值的时候，就必须这样计算：
+舉例來說，如果把像素的顏色值設為`Uint8Array`類型，那麼乘以一個 gamma 值的時候，就必須這樣計算：
 
 ```javascript
 u8[i] = Math.min(255, Math.max(0, u8[i] * gamma));
 ```
 
-因为`Uint8Array`类型对于大于 255 的运算结果（比如`0xFF+1`），会自动变为`0x00`，所以图像处理必须要像上面这样算。这样做很麻烦，而且影响性能。如果将颜色值设为`Uint8ClampedArray`类型，计算就简化许多。
+因為`Uint8Array`類型對於大於 255 的運算結果（比如`0xFF+1`），會自動變為`0x00`，所以圖像處理必須要像上面這樣算。這樣做很麻煩，而且影響性能。如果將顏色值設為`Uint8ClampedArray`類型，計算就簡化許多。
 
 ```javascript
 pixels[i] *= gamma;
 ```
 
-`Uint8ClampedArray`类型确保将小于 0 的值设为 0，将大于 255 的值设为 255。注意，IE 10 不支持该类型。
+`Uint8ClampedArray`類型確保將小於 0 的值設為 0，將大於 255 的值設為 255。注意，IE 10 不支持該類型。
 
 ### WebSocket
 
-`WebSocket`可以通过`ArrayBuffer`，发送或接收二进制数据。
+`WebSocket`可以通過`ArrayBuffer`，發送或接收二進制數據。
 
 ```javascript
 let socket = new WebSocket('ws://127.0.0.1:8081');
@@ -906,7 +906,7 @@ socket.addEventListener('message', function (event) {
 
 ### Fetch API
 
-Fetch API 取回的数据，就是`ArrayBuffer`对象。
+Fetch API 取回的數據，就是`ArrayBuffer`物件。
 
 ```javascript
 fetch(url)
@@ -920,7 +920,7 @@ fetch(url)
 
 ### File API
 
-如果知道一个文件的二进制数据类型，也可以将这个文件读取为`ArrayBuffer`对象。
+如果知道一個文件的二進制數據類型，也可以將這個文件讀取為`ArrayBuffer`物件。
 
 ```javascript
 const fileInput = document.getElementById('fileInput');
@@ -933,7 +933,7 @@ reader.onload = function () {
 };
 ```
 
-下面以处理 bmp 文件为例。假定`file`变量是一个指向 bmp 文件的文件对象，首先读取文件。
+下面以處理 bmp 文件為例。假定`file`變數是一個指向 bmp 文件的文件物件，首先讀取文件。
 
 ```javascript
 const reader = new FileReader();
@@ -941,18 +941,18 @@ reader.addEventListener("load", processimage, false);
 reader.readAsArrayBuffer(file);
 ```
 
-然后，定义处理图像的回调函数：先在二进制数据之上建立一个`DataView`视图，再建立一个`bitmap`对象，用于存放处理后的数据，最后将图像展示在`Canvas`元素之中。
+然後，定義處理圖像的回調函數：先在二進制數據之上建立一個`DataView`視圖，再建立一個`bitmap`物件，用於存放處理後的數據，最後將圖像展示在`Canvas`元素之中。
 
 ```javascript
 function processimage(e) {
   const buffer = e.target.result;
   const datav = new DataView(buffer);
   const bitmap = {};
-  // 具体的处理步骤
+  // 具體的處理步驟
 }
 ```
 
-具体处理图像数据时，先处理 bmp 的文件头。具体每个文件头的格式和定义，请参阅有关资料。
+具體處理圖像數據時，先處理 bmp 的文件頭。具體每個文件頭的格式和定義，請參閱有關資料。
 
 ```javascript
 bitmap.fileheader = {};
@@ -963,7 +963,7 @@ bitmap.fileheader.bfReserved2 = datav.getUint16(8, true);
 bitmap.fileheader.bfOffBits = datav.getUint32(10, true);
 ```
 
-接着处理图像元信息部分。
+接著處理圖像元信息部分。
 
 ```javascript
 bitmap.infoheader = {};
@@ -980,258 +980,258 @@ bitmap.infoheader.biClrUsed = datav.getUint32(46, true);
 bitmap.infoheader.biClrImportant = datav.getUint32(50, true);
 ```
 
-最后处理图像本身的像素信息。
+最後處理圖像本身的像素信息。
 
 ```javascript
 const start = bitmap.fileheader.bfOffBits;
 bitmap.pixels = new Uint8Array(buffer, start);
 ```
 
-至此，图像文件的数据全部处理完成。下一步，可以根据需要，进行图像变形，或者转换格式，或者展示在`Canvas`网页元素之中。
+至此，圖像文件的數據全部處理完成。下一步，可以根據需要，進行圖像變形，或者轉換格式，或者展示在`Canvas`網頁元素之中。
 
 ## SharedArrayBuffer
 
-JavaScript 是单线程的，Web worker 引入了多线程：主线程用来与用户互动，Worker 线程用来承担计算任务。每个线程的数据都是隔离的，通过`postMessage()`通信。下面是一个例子。
+JavaScript 是單線程的，Web worker 引入了多線程：主線程用來與用戶互動，Worker 線程用來承擔計算任務。每個線程的數據都是隔離的，通過`postMessage()`通信。下面是一個例子。
 
 ```javascript
-// 主线程
+// 主線程
 const w = new Worker('myworker.js');
 ```
 
-上面代码中，主线程新建了一个 Worker 线程。该线程与主线程之间会有一个通信渠道，主线程通过`w.postMessage`向 Worker 线程发消息，同时通过`message`事件监听 Worker 线程的回应。
+上面代碼中，主線程新建了一個 Worker 線程。該線程與主線程之間會有一個通信渠道，主線程通過`w.postMessage`向 Worker 線程發消息，同時通過`message`事件監聽 Worker 線程的回應。
 
 ```javascript
-// 主线程
+// 主線程
 w.postMessage('hi');
 w.onmessage = function (ev) {
   console.log(ev.data);
 }
 ```
 
-上面代码中，主线程先发一个消息`hi`，然后在监听到 Worker 线程的回应后，就将其打印出来。
+上面代碼中，主線程先發一個消息`hi`，然後在監聽到 Worker 線程的回應後，就將其打印出來。
 
-Worker 线程也是通过监听`message`事件，来获取主线程发来的消息，并作出反应。
+Worker 線程也是通過監聽`message`事件，來獲取主線程發來的消息，並作出反應。
 
 ```javascript
-// Worker 线程
+// Worker 線程
 onmessage = function (ev) {
   console.log(ev.data);
   postMessage('ho');
 }
 ```
 
-线程之间的数据交换可以是各种格式，不仅仅是字符串，也可以是二进制数据。这种交换采用的是复制机制，即一个进程将需要分享的数据复制一份，通过`postMessage`方法交给另一个进程。如果数据量比较大，这种通信的效率显然比较低。很容易想到，这时可以留出一块内存区域，由主线程与 Worker 线程共享，两方都可以读写，那么就会大大提高效率，协作起来也会比较简单（不像`postMessage`那么麻烦）。
+線程之間的數據交換可以是各種格式，不僅僅是字符串，也可以是二進制數據。這種交換採用的是複製機制，即一個進程將需要分享的數據複製一份，通過`postMessage`方法交給另一個進程。如果數據量比較大，這種通信的效率顯然比較低。很容易想到，這時可以留出一塊內存區域，由主線程與 Worker 線程共享，兩方都可以讀寫，那麼就會大大提高效率，協作起來也會比較簡單（不像`postMessage`那麼麻煩）。
 
-ES2017 引入[`SharedArrayBuffer`](https://github.com/tc39/ecmascript_sharedmem/blob/master/TUTORIAL.md)，允许 Worker 线程与主线程共享同一块内存。`SharedArrayBuffer`的 API 与`ArrayBuffer`一模一样，唯一的区别是后者无法共享。
+ES2017 引入[`SharedArrayBuffer`](https://github.com/tc39/ecmascript_sharedmem/blob/master/TUTORIAL.md)，允許 Worker 線程與主線程共享同一塊內存。`SharedArrayBuffer`的 API 與`ArrayBuffer`一模一樣，唯一的區別是後者無法共享。
 
 ```javascript
-// 主线程
+// 主線程
 
-// 新建 1KB 共享内存
+// 新建 1KB 共享內存
 const sharedBuffer = new SharedArrayBuffer(1024);
 
-// 主线程将共享内存的地址发送出去
+// 主線程將共享內存的地址發送出去
 w.postMessage(sharedBuffer);
 
-// 在共享内存上建立视图，供写入数据
+// 在共享內存上建立視圖，供寫入數據
 const sharedArray = new Int32Array(sharedBuffer);
 ```
 
-上面代码中，`postMessage`方法的参数是`SharedArrayBuffer`对象。
+上面代碼中，`postMessage`方法的參數是`SharedArrayBuffer`物件。
 
-Worker 线程从事件的`data`属性上面取到数据。
+Worker 線程從事件的`data`屬性上面取到數據。
 
 ```javascript
-// Worker 线程
+// Worker 線程
 onmessage = function (ev) {
-  // 主线程共享的数据，就是 1KB 的共享内存
+  // 主線程共享的數據，就是 1KB 的共享內存
   const sharedBuffer = ev.data;
 
-  // 在共享内存上建立视图，方便读写
+  // 在共享內存上建立視圖，方便讀寫
   const sharedArray = new Int32Array(sharedBuffer);
 
   // ...
 };
 ```
 
-共享内存也可以在 Worker 线程创建，发给主线程。
+共享內存也可以在 Worker 線程創建，發給主線程。
 
-`SharedArrayBuffer`与`ArrayBuffer`一样，本身是无法读写的，必须在上面建立视图，然后通过视图读写。
+`SharedArrayBuffer`與`ArrayBuffer`一樣，本身是無法讀寫的，必須在上面建立視圖，然後通過視圖讀寫。
 
 ```javascript
-// 分配 10 万个 32 位整数占据的内存空间
+// 分配 10 萬個 32 位整數佔據的內存空間
 const sab = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 100000);
 
-// 建立 32 位整数视图
+// 建立 32 位整數視圖
 const ia = new Int32Array(sab);  // ia.length == 100000
 
-// 新建一个质数生成器
+// 新建一個質數生成器
 const primes = new PrimeGenerator();
 
-// 将 10 万个质数，写入这段内存空间
+// 將 10 萬個質數，寫入這段內存空間
 for ( let i=0 ; i < ia.length ; i++ )
   ia[i] = primes.next();
 
-// 向 Worker 线程发送这段共享内存
+// 向 Worker 線程發送這段共享內存
 w.postMessage(ia);
 ```
 
-Worker 线程收到数据后的处理如下。
+Worker 線程收到數據後的處理如下。
 
 ```javascript
-// Worker 线程
+// Worker 線程
 let ia;
 onmessage = function (ev) {
   ia = ev.data;
   console.log(ia.length); // 100000
-  console.log(ia[37]); // 输出 163，因为这是第38个质数
+  console.log(ia[37]); // 輸出 163，因為這是第38個質數
 };
 ```
 
-## Atomics 对象
+## Atomics 物件
 
-多线程共享内存，最大的问题就是如何防止两个线程同时修改某个地址，或者说，当一个线程修改共享内存以后，必须有一个机制让其他线程同步。SharedArrayBuffer API 提供`Atomics`对象，保证所有共享内存的操作都是“原子性”的，并且可以在所有线程内同步。
+多線程共享內存，最大的問題就是如何防止兩個線程同時修改某個地址，或者說，當一個線程修改共享內存以後，必須有一個機制讓其他線程同步。SharedArrayBuffer API 提供`Atomics`物件，保證所有共享內存的操作都是“原子性”的，並且可以在所有線程內同步。
 
-什么叫“原子性操作”呢？现代编程语言中，一条普通的命令被编译器处理以后，会变成多条机器指令。如果是单线程运行，这是没有问题的；多线程环境并且共享内存时，就会出问题，因为这一组机器指令的运行期间，可能会插入其他线程的指令，从而导致运行结果出错。请看下面的例子。
+什麼叫“原子性操作”呢？現代編程語言中，一條普通的命令被編譯器處理以後，會變成多條機器指令。如果是單線程運行，這是沒有問題的；多線程環境並且共享內存時，就會出問題，因為這一組機器指令的運行期間，可能會插入其他線程的指令，從而導致運行結果出錯。請看下面的例子。
 
 ```javascript
-// 主线程
+// 主線程
 ia[42] = 314159;  // 原先的值 191
 ia[37] = 123456;  // 原先的值 163
 
-// Worker 线程
+// Worker 線程
 console.log(ia[37]);
 console.log(ia[42]);
-// 可能的结果
+// 可能的結果
 // 123456
 // 191
 ```
 
-上面代码中，主线程的原始顺序是先对 42 号位置赋值，再对 37 号位置赋值。但是，编译器和 CPU 为了优化，可能会改变这两个操作的执行顺序（因为它们之间互不依赖），先对 37 号位置赋值，再对 42 号位置赋值。而执行到一半的时候，Worker 线程可能就会来读取数据，导致打印出`123456`和`191`。
+上面代碼中，主線程的原始順序是先對 42 號位置賦值，再對 37 號位置賦值。但是，編譯器和 CPU 為了優化，可能會改變這兩個操作的執行順序（因為它們之間互不依賴），先對 37 號位置賦值，再對 42 號位置賦值。而執行到一半的時候，Worker 線程可能就會來讀取數據，導致打印出`123456`和`191`。
 
-下面是另一个例子。
+下面是另一個例子。
 
 ```javascript
-// 主线程
+// 主線程
 const sab = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 100000);
 const ia = new Int32Array(sab);
 
 for (let i = 0; i < ia.length; i++) {
-  ia[i] = primes.next(); // 将质数放入 ia
+  ia[i] = primes.next(); // 將質數放入 ia
 }
 
-// worker 线程
-ia[112]++; // 错误
-Atomics.add(ia, 112, 1); // 正确
+// worker 線程
+ia[112]++; // 錯誤
+Atomics.add(ia, 112, 1); // 正確
 ```
 
-上面代码中，Worker 线程直接改写共享内存`ia[112]++`是不正确的。因为这行语句会被编译成多条机器指令，这些指令之间无法保证不会插入其他进程的指令。请设想如果两个线程同时`ia[112]++`，很可能它们得到的结果都是不正确的。
+上面代碼中，Worker 線程直接改寫共享內存`ia[112]++`是不正確的。因為這行語句會被編譯成多條機器指令，這些指令之間無法保證不會插入其他進程的指令。請設想如果兩個線程同時`ia[112]++`，很可能它們得到的結果都是不正確的。
 
-`Atomics`对象就是为了解决这个问题而提出，它可以保证一个操作所对应的多条机器指令，一定是作为一个整体运行的，中间不会被打断。也就是说，它所涉及的操作都可以看作是原子性的单操作，这可以避免线程竞争，提高多线程共享内存时的操作安全。所以，`ia[112]++`要改写成`Atomics.add(ia, 112, 1)`。
+`Atomics`物件就是為瞭解決這個問題而提出，它可以保證一個操作所對應的多條機器指令，一定是作為一個整體運行的，中間不會被打斷。也就是說，它所涉及的操作都可以看作是原子性的單操作，這可以避免線程競爭，提高多線程共享內存時的操作安全。所以，`ia[112]++`要改寫成`Atomics.add(ia, 112, 1)`。
 
-`Atomics`对象提供多种方法。
+`Atomics`物件提供多種方法。
 
 **（1）Atomics.store()，Atomics.load()**
 
-`store()`方法用来向共享内存写入数据，`load()`方法用来从共享内存读出数据。比起直接的读写操作，它们的好处是保证了读写操作的原子性。
+`store()`方法用來向共享內存寫入數據，`load()`方法用來從共享內存讀出數據。比起直接的讀寫操作，它們的好處是保證了讀寫操作的原子性。
 
-此外，它们还用来解决一个问题：多个线程使用共享内存的某个位置作为开关（flag），一旦该位置的值变了，就执行特定操作。这时，必须保证该位置的赋值操作，一定是在它前面的所有可能会改写内存的操作结束后执行；而该位置的取值操作，一定是在它后面所有可能会读取该位置的操作开始之前执行。`store`方法和`load`方法就能做到这一点，编译器不会为了优化，而打乱机器指令的执行顺序。
+此外，它們還用來解決一個問題：多個線程使用共享內存的某個位置作為開關（flag），一旦該位置的值變了，就執行特定操作。這時，必須保證該位置的賦值操作，一定是在它前面的所有可能會改寫內存的操作結束後執行；而該位置的取值操作，一定是在它後面所有可能會讀取該位置的操作開始之前執行。`store`方法和`load`方法就能做到這一點，編譯器不會為了優化，而打亂機器指令的執行順序。
 
 ```javascript
 Atomics.load(array, index)
 Atomics.store(array, index, value)
 ```
 
-`store`方法接受三个参数：SharedBuffer 的视图、位置索引和值，返回`sharedArray[index]`的值。`load`方法只接受两个参数：SharedBuffer 的视图和位置索引，也是返回`sharedArray[index]`的值。
+`store`方法接受三個參數：SharedBuffer 的視圖、位置索引和值，返回`sharedArray[index]`的值。`load`方法只接受兩個參數：SharedBuffer 的視圖和位置索引，也是返回`sharedArray[index]`的值。
 
 ```javascript
-// 主线程 main.js
+// 主線程 main.js
 ia[42] = 314159;  // 原先的值 191
 Atomics.store(ia, 37, 123456);  // 原先的值是 163
 
-// Worker 线程 worker.js
+// Worker 線程 worker.js
 while (Atomics.load(ia, 37) == 163);
 console.log(ia[37]);  // 123456
 console.log(ia[42]);  // 314159
 ```
 
-上面代码中，主线程的`Atomics.store`向 42 号位置的赋值，一定是早于 37 位置的赋值。只要 37 号位置等于 163，Worker 线程就不会终止循环，而对 37 号位置和 42 号位置的取值，一定是在`Atomics.load`操作之后。
+上面代碼中，主線程的`Atomics.store`向 42 號位置的賦值，一定是早於 37 位置的賦值。只要 37 號位置等於 163，Worker 線程就不會終止循環，而對 37 號位置和 42 號位置的取值，一定是在`Atomics.load`操作之後。
 
 **（2）Atomics.wait()，Atomics.wake()**
 
-使用`while`循环等待主线程的通知，不是很高效，如果用在主线程，就会造成卡顿，`Atomics`对象提供了`wait()`和`wake()`两个方法用于等待通知。这两个方法相当于锁内存，即在一个线程进行操作时，让其他线程休眠（建立锁），等到操作结束，再唤醒那些休眠的线程（解除锁）。
+使用`while`循環等待主線程的通知，不是很高效，如果用在主線程，就會造成卡頓，`Atomics`物件提供了`wait()`和`wake()`兩個方法用於等待通知。這兩個方法相當於鎖內存，即在一個線程進行操作時，讓其他線程休眠（建立鎖），等到操作結束，再喚醒那些休眠的線程（解除鎖）。
 
 ```javascript
 Atomics.wait(sharedArray, index, value, time)
 ```
 
-`Atomics.wait`用于当`sharedArray[index]`不等于`value`，就返回`not-equal`，否则就进入休眠，只有使用`Atomics.wake()`或者`time`毫秒以后才能唤醒。被`Atomics.wake()`唤醒时，返回`ok`，超时唤醒时返回`timed-out`。
+`Atomics.wait`用於當`sharedArray[index]`不等於`value`，就返回`not-equal`，否則就進入休眠，只有使用`Atomics.wake()`或者`time`毫秒以後才能喚醒。被`Atomics.wake()`喚醒時，返回`ok`，超時喚醒時返回`timed-out`。
 
 ```javascript
 Atomics.wake(sharedArray, index, count)
 ```
 
-`Atomics.wake`用于唤醒`count`数目在`sharedArray[index]`位置休眠的线程，让它继续往下运行。
+`Atomics.wake`用於喚醒`count`數目在`sharedArray[index]`位置休眠的線程，讓它繼續往下運行。
 
-下面请看一个例子。
+下面請看一個例子。
 
 ```javascript
-// 线程一
+// 線程一
 console.log(ia[37]);  // 163
 Atomics.store(ia, 37, 123456);
 Atomics.wake(ia, 37, 1);
 
-// 线程二
+// 線程二
 Atomics.wait(ia, 37, 163);
 console.log(ia[37]);  // 123456
 ```
 
-上面代码中，共享内存视图`ia`的第 37 号位置，原来的值是`163`。进程二使用`Atomics.wait()`方法，指定只要`ia[37]`等于`163`，就进入休眠状态。进程一使用`Atomics.store()`方法，将`123456`放入`ia[37]`，然后使用`Atomics.wake()`方法将监视`ia[37]`的休眠线程唤醒。
+上面代碼中，共享內存視圖`ia`的第 37 號位置，原來的值是`163`。進程二使用`Atomics.wait()`方法，指定只要`ia[37]`等於`163`，就進入休眠狀態。進程一使用`Atomics.store()`方法，將`123456`放入`ia[37]`，然後使用`Atomics.wake()`方法將監視`ia[37]`的休眠線程喚醒。
 
-另外，基于`wait`和`wake`这两个方法的锁内存实现，可以看 Lars T Hansen 的 [js-lock-and-condition](https://github.com/lars-t-hansen/js-lock-and-condition) 这个库。
+另外，基於`wait`和`wake`這兩個方法的鎖內存實現，可以看 Lars T Hansen 的 [js-lock-and-condition](https://github.com/lars-t-hansen/js-lock-and-condition) 這個庫。
 
-注意，浏览器的主线程有权“拒绝”休眠，这是为了防止用户失去响应。
+注意，瀏覽器的主線程有權“拒絕”休眠，這是為了防止用戶失去響應。
 
-**（3）运算方法**
+**（3）運算方法**
 
-共享内存上面的某些运算是不能被打断的，即不能在运算过程中，让其他线程改写内存上面的值。Atomics 对象提供了一些运算方法，防止数据被改写。
+共享內存上面的某些運算是不能被打斷的，即不能在運算過程中，讓其他線程改寫內存上面的值。Atomics 物件提供了一些運算方法，防止數據被改寫。
 
 ```javascript
 Atomics.add(sharedArray, index, value)
 ```
 
-`Atomics.add`用于将`value`加到`sharedArray[index]`，返回`sharedArray[index]`旧的值。
+`Atomics.add`用於將`value`加到`sharedArray[index]`，返回`sharedArray[index]`舊的值。
 
 ```javascript
 Atomics.sub(sharedArray, index, value)
 ```
 
-`Atomics.sub`用于将`value`从`sharedArray[index]`减去，返回`sharedArray[index]`旧的值。
+`Atomics.sub`用於將`value`從`sharedArray[index]`減去，返回`sharedArray[index]`舊的值。
 
 ```javascript
 Atomics.and(sharedArray, index, value)
 ```
 
-`Atomics.and`用于将`value`与`sharedArray[index]`进行位运算`and`，放入`sharedArray[index]`，并返回旧的值。
+`Atomics.and`用於將`value`與`sharedArray[index]`進行位運算`and`，放入`sharedArray[index]`，並返回舊的值。
 
 ```javascript
 Atomics.or(sharedArray, index, value)
 ```
 
-`Atomics.or`用于将`value`与`sharedArray[index]`进行位运算`or`，放入`sharedArray[index]`，并返回旧的值。
+`Atomics.or`用於將`value`與`sharedArray[index]`進行位運算`or`，放入`sharedArray[index]`，並返回舊的值。
 
 ```javascript
 Atomics.xor(sharedArray, index, value)
 ```
 
-`Atomic.xor`用于将`vaule`与`sharedArray[index]`进行位运算`xor`，放入`sharedArray[index]`，并返回旧的值。
+`Atomic.xor`用於將`vaule`與`sharedArray[index]`進行位運算`xor`，放入`sharedArray[index]`，並返回舊的值。
 
 **（4）其他方法**
 
-`Atomics`对象还有以下方法。
+`Atomics`物件還有以下方法。
 
-- `Atomics.compareExchange(sharedArray, index, oldval, newval)`：如果`sharedArray[index]`等于`oldval`，就写入`newval`，返回`oldval`。
-- `Atomics.exchange(sharedArray, index, value)`：设置`sharedArray[index]`的值，返回旧的值。
-- `Atomics.isLockFree(size)`：返回一个布尔值，表示`Atomics`对象是否可以处理某个`size`的内存锁定。如果返回`false`，应用程序就需要自己来实现锁定。
+- `Atomics.compareExchange(sharedArray, index, oldval, newval)`：如果`sharedArray[index]`等於`oldval`，就寫入`newval`，返回`oldval`。
+- `Atomics.exchange(sharedArray, index, value)`：設置`sharedArray[index]`的值，返回舊的值。
+- `Atomics.isLockFree(size)`：返回一個布爾值，表示`Atomics`物件是否可以處理某個`size`的內存鎖定。如果返回`false`，應用程序就需要自己來實現鎖定。
 
-`Atomics.compareExchange`的一个用途是，从 SharedArrayBuffer 读取一个值，然后对该值进行某个操作，操作结束以后，检查一下 SharedArrayBuffer 里面原来那个值是否发生变化（即被其他线程改写过）。如果没有改写过，就将它写回原来的位置，否则读取新的值，再重头进行一次操作。
+`Atomics.compareExchange`的一個用途是，從 SharedArrayBuffer 讀取一個值，然後對該值進行某個操作，操作結束以後，檢查一下 SharedArrayBuffer 裡面原來那個值是否發生變化（即被其他線程改寫過）。如果沒有改寫過，就將它寫回原來的位置，否則讀取新的值，再重頭進行一次操作。

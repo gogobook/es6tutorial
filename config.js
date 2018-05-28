@@ -1,6 +1,6 @@
 var CONFIG = {
   // your website's title
-  document_title: "ECMAScript 6入门",
+  document_title: "ECMAScript 6入門",
 
   // index page
   index: "README.md",

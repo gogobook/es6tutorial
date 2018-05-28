@@ -1,30 +1,30 @@
-# 数值的扩展
+# 數值的擴展
 
-## 二进制和八进制表示法
+## 二進制和八進製表示法
 
-ES6 提供了二进制和八进制数值的新的写法，分别用前缀`0b`（或`0B`）和`0o`（或`0O`）表示。
+ES6 提供了二進制和八進制數值的新的寫法，分別用前綴`0b`（或`0B`）和`0o`（或`0O`）表示。
 
 ```javascript
 0b111110111 === 503 // true
 0o767 === 503 // true
 ```
 
-从 ES5 开始，在严格模式之中，八进制就不再允许使用前缀`0`表示，ES6 进一步明确，要使用前缀`0o`表示。
+從 ES5 開始，在嚴格模式之中，八進制就不再允許使用前綴`0`表示，ES6 進一步明確，要使用前綴`0o`表示。
 
 ```javascript
-// 非严格模式
+// 非嚴格模式
 (function(){
   console.log(0o11 === 011);
 })() // true
 
-// 严格模式
+// 嚴格模式
 (function(){
   'use strict';
   console.log(0o11 === 011);
 })() // Uncaught SyntaxError: Octal literals are not allowed in strict mode.
 ```
 
-如果要将`0b`和`0o`前缀的字符串数值转为十进制，要使用`Number`方法。
+如果要將`0b`和`0o`前綴的字符串數值轉為十進制，要使用`Number`方法。
 
 ```javascript
 Number('0b111')  // 7
@@ -33,9 +33,9 @@ Number('0o10')  // 8
 
 ## Number.isFinite(), Number.isNaN()
 
-ES6 在`Number`对象上，新提供了`Number.isFinite()`和`Number.isNaN()`两个方法。
+ES6 在`Number`物件上，新提供了`Number.isFinite()`和`Number.isNaN()`兩個方法。
 
-`Number.isFinite()`用来检查一个数值是否为有限的（finite），即不是`Infinity`。
+`Number.isFinite()`用來檢查一個數值是否為有限的（finite），即不是`Infinity`。
 
 ```javascript
 Number.isFinite(15); // true
@@ -48,9 +48,9 @@ Number.isFinite('15'); // false
 Number.isFinite(true); // false
 ```
 
-注意，如果参数类型不是数值，`Number.isFinite`一律返回`false`。
+注意，如果參數類型不是數值，`Number.isFinite`一律返回`false`。
 
-`Number.isNaN()`用来检查一个值是否为`NaN`。
+`Number.isNaN()`用來檢查一個值是否為`NaN`。
 
 ```javascript
 Number.isNaN(NaN) // true
@@ -62,9 +62,9 @@ Number.isNaN('true' / 0) // true
 Number.isNaN('true' / 'true') // true
 ```
 
-如果参数类型不是`NaN`，`Number.isNaN`一律返回`false`。
+如果參數類型不是`NaN`，`Number.isNaN`一律返回`false`。
 
-它们与传统的全局方法`isFinite()`和`isNaN()`的区别在于，传统方法先调用`Number()`将非数值的值转为数值，再进行判断，而这两个新方法只对数值有效，`Number.isFinite()`对于非数值一律返回`false`, `Number.isNaN()`只有对于`NaN`才返回`true`，非`NaN`一律返回`false`。
+它們與傳統的全局方法`isFinite()`和`isNaN()`的區別在於，傳統方法先調用`Number()`將非數值的值轉為數值，再進行判斷，而這兩個新方法只對數值有效，`Number.isFinite()`對於非數值一律返回`false`, `Number.isNaN()`只有對於`NaN`才返回`true`，非`NaN`一律返回`false`。
 
 ```javascript
 isFinite(25) // true
@@ -81,19 +81,19 @@ Number.isNaN(1) // false
 
 ## Number.parseInt(), Number.parseFloat()
 
-ES6 将全局方法`parseInt()`和`parseFloat()`，移植到`Number`对象上面，行为完全保持不变。
+ES6 將全局方法`parseInt()`和`parseFloat()`，移植到`Number`物件上面，行為完全保持不變。
 
 ```javascript
-// ES5的写法
+// ES5的寫法
 parseInt('12.34') // 12
 parseFloat('123.45#') // 123.45
 
-// ES6的写法
+// ES6的寫法
 Number.parseInt('12.34') // 12
 Number.parseFloat('123.45#') // 123.45
 ```
 
-这样做的目的，是逐步减少全局性方法，使得语言逐步模块化。
+這樣做的目的，是逐步減少全局性方法，使得語言逐步模塊化。
 
 ```javascript
 Number.parseInt === parseInt // true
@@ -102,21 +102,21 @@ Number.parseFloat === parseFloat // true
 
 ## Number.isInteger()
 
-`Number.isInteger()`用来判断一个数值是否为整数。
+`Number.isInteger()`用來判斷一個數值是否為整數。
 
 ```javascript
 Number.isInteger(25) // true
 Number.isInteger(25.1) // false
 ```
 
-JavaScript 内部，整数和浮点数采用的是同样的储存方法，所以 25  和 25.0 被视为同一个值。
+JavaScript 內部，整數和浮點數採用的是同樣的儲存方法，所以 25  和 25.0 被視為同一個值。
 
 ```javascript
 Number.isInteger(25) // true
 Number.isInteger(25.0) // true
 ```
 
-如果参数不是数值，`Number.isInteger`返回`false`。
+如果參數不是數值，`Number.isInteger`返回`false`。
 
 ```javascript
 Number.isInteger() // false
@@ -125,30 +125,30 @@ Number.isInteger('15') // false
 Number.isInteger(true) // false
 ```
 
-注意，由于 JavaScript 采用 IEEE 754 标准，数值存储为64位双精度格式，数值精度最多可以达到 53 个二进制位（1 个隐藏位与 52 个有效位）。如果数值的精度超过这个限度，第54位及后面的位就会被丢弃，这种情况下，`Number.isInteger`可能会误判。
+注意，由於 JavaScript 採用 IEEE 754 標準，數值存儲為64位雙精度格式，數值精度最多可以達到 53 個二進制位（1 個隱藏位與 52 個有效位）。如果數值的精度超過這個限度，第54位及後面的位就會被丟棄，這種情況下，`Number.isInteger`可能會誤判。
 
 ```javascript
 Number.isInteger(3.0000000000000002) // true
 ```
 
-上面代码中，`Number.isInteger`的参数明明不是整数，但是会返回`true`。原因就是这个小数的精度达到了小数点后16个十进制位，转成二进制位超过了53个二进制位，导致最后的那个`2`被丢弃了。
+上面代碼中，`Number.isInteger`的參數明明不是整數，但是會返回`true`。原因就是這個小數的精度達到了小數點後16個十進制位，轉成二進制位超過了53個二進制位，導致最後的那個`2`被丟棄了。
 
-类似的情况还有，如果一个数值的绝对值小于`Number.MIN_VALUE`（5E-324），即小于 JavaScript 能够分辨的最小值，会被自动转为 0。这时，`Number.isInteger`也会误判。
+類似的情況還有，如果一個數值的絕對值小於`Number.MIN_VALUE`（5E-324），即小於 JavaScript 能夠分辨的最小值，會被自動轉為 0。這時，`Number.isInteger`也會誤判。
 
 ```javascript
 Number.isInteger(5E-324) // false
 Number.isInteger(5E-325) // true
 ```
 
-上面代码中，`5E-325`由于值太小，会被自动转为0，因此返回`true`。
+上面代碼中，`5E-325`由於值太小，會被自動轉為0，因此返回`true`。
 
-总之，如果对数据精度的要求较高，不建议使用`Number.isInteger()`判断一个数值是否为整数。
+總之，如果對數據精度的要求較高，不建議使用`Number.isInteger()`判斷一個數值是否為整數。
 
 ## Number.EPSILON
 
-ES6 在`Number`对象上面，新增一个极小的常量`Number.EPSILON`。根据规格，它表示 1 与大于 1 的最小浮点数之间的差。
+ES6 在`Number`物件上面，新增一個極小的常量`Number.EPSILON`。根據規格，它表示 1 與大於 1 的最小浮點數之間的差。
 
-对于 64 位浮点数来说，大于 1 的最小浮点数相当于二进制的`1.00..001`，小数点后面有连续 51 个零。这个值减去 1 之后，就等于 2 的 -52 次方。
+對於 64 位浮點數來說，大於 1 的最小浮點數相當於二進制的`1.00..001`，小數點後面有連續 51 個零。這個值減去 1 之後，就等於 2 的 -52 次方。
 
 ```javascript
 Number.EPSILON === Math.pow(2, -52)
@@ -159,9 +159,9 @@ Number.EPSILON.toFixed(20)
 // "0.00000000000000022204"
 ```
 
-`Number.EPSILON`实际上是 JavaScript 能够表示的最小精度。误差如果小于这个值，就可以认为已经没有意义了，即不存在误差了。
+`Number.EPSILON`實際上是 JavaScript 能夠表示的最小精度。誤差如果小於這個值，就可以認為已經沒有意義了，即不存在誤差了。
 
-引入一个这么小的量的目的，在于为浮点数计算，设置一个误差范围。我们知道浮点数计算是不精确的。
+引入一個這麼小的量的目的，在於為浮點數計算，設置一個誤差範圍。我們知道浮點數計算是不精確的。
 
 ```javascript
 0.1 + 0.2
@@ -174,20 +174,20 @@ Number.EPSILON.toFixed(20)
 // '0.00000000000000005551'
 ```
 
-上面代码解释了，为什么比较`0.1 + 0.2`与`0.3`得到的结果是`false`。
+上面代碼解釋了，為什麼比較`0.1 + 0.2`與`0.3`得到的結果是`false`。
 
 ```javascript
 0.1 + 0.2 === 0.3 // false
 ```
 
-`Number.EPSILON`可以用来设置“能够接受的误差范围”。比如，误差范围设为 2 的-50 次方（即`Number.EPSILON * Math.pow(2, 2)`），即如果两个浮点数的差小于这个值，我们就认为这两个浮点数相等。
+`Number.EPSILON`可以用來設置“能夠接受的誤差範圍”。比如，誤差範圍設為 2 的-50 次方（即`Number.EPSILON * Math.pow(2, 2)`），即如果兩個浮點數的差小於這個值，我們就認為這兩個浮點數相等。
 
 ```javascript
 5.551115123125783e-17 < Number.EPSILON * Math.pow(2, 2)
 // true
 ```
 
-因此，`Number.EPSILON`的实质是一个可以接受的最小误差范围。
+因此，`Number.EPSILON`的實質是一個可以接受的最小誤差範圍。
 
 ```javascript
 function withinErrorMargin (left, right) {
@@ -201,11 +201,11 @@ withinErrorMargin(0.1 + 0.2, 0.3) // true
 withinErrorMargin(1.1 + 1.3, 2.4) // true
 ```
 
-上面的代码为浮点数运算，部署了一个误差检查函数。
+上面的代碼為浮點數運算，部署了一個誤差檢查函數。
 
-## 安全整数和 Number.isSafeInteger()
+## 安全整數和 Number.isSafeInteger()
 
-JavaScript 能够准确表示的整数范围在`-2^53`到`2^53`之间（不含两个端点），超过这个范围，无法精确表示这个值。
+JavaScript 能夠準確表示的整數範圍在`-2^53`到`2^53`之間（不含兩個端點），超過這個範圍，無法精確表示這個值。
 
 ```javascript
 Math.pow(2, 53) // 9007199254740992
@@ -217,9 +217,9 @@ Math.pow(2, 53) === Math.pow(2, 53) + 1
 // true
 ```
 
-上面代码中，超出 2 的 53 次方之后，一个数就不精确了。
+上面代碼中，超出 2 的 53 次方之後，一個數就不精確了。
 
-ES6 引入了`Number.MAX_SAFE_INTEGER`和`Number.MIN_SAFE_INTEGER`这两个常量，用来表示这个范围的上下限。
+ES6 引入了`Number.MAX_SAFE_INTEGER`和`Number.MIN_SAFE_INTEGER`這兩個常量，用來表示這個範圍的上下限。
 
 ```javascript
 Number.MAX_SAFE_INTEGER === Math.pow(2, 53) - 1
@@ -233,9 +233,9 @@ Number.MIN_SAFE_INTEGER === -9007199254740991
 // true
 ```
 
-上面代码中，可以看到 JavaScript 能够精确表示的极限。
+上面代碼中，可以看到 JavaScript 能夠精確表示的極限。
 
-`Number.isSafeInteger()`则是用来判断一个整数是否落在这个范围之内。
+`Number.isSafeInteger()`則是用來判斷一個整數是否落在這個範圍之內。
 
 ```javascript
 Number.isSafeInteger('a') // false
@@ -255,7 +255,7 @@ Number.isSafeInteger(Number.MAX_SAFE_INTEGER) // true
 Number.isSafeInteger(Number.MAX_SAFE_INTEGER + 1) // false
 ```
 
-这个函数的实现很简单，就是跟安全整数的两个边界值比较一下。
+這個函數的實現很簡單，就是跟安全整數的兩個邊界值比較一下。
 
 ```javascript
 Number.isSafeInteger = function (n) {
@@ -266,7 +266,7 @@ Number.isSafeInteger = function (n) {
 }
 ```
 
-实际使用这个函数时，需要注意。验证运算结果是否落在安全整数的范围内，不要只验证运算结果，而要同时验证参与运算的每个值。
+實際使用這個函數時，需要注意。驗證運算結果是否落在安全整數的範圍內，不要只驗證運算結果，而要同時驗證參與運算的每個值。
 
 ```javascript
 Number.isSafeInteger(9007199254740993)
@@ -276,18 +276,18 @@ Number.isSafeInteger(990)
 Number.isSafeInteger(9007199254740993 - 990)
 // true
 9007199254740993 - 990
-// 返回结果 9007199254740002
-// 正确答案应该是 9007199254740003
+// 返回結果 9007199254740002
+// 正確答案應該是 9007199254740003
 ```
 
-上面代码中，`9007199254740993`不是一个安全整数，但是`Number.isSafeInteger`会返回结果，显示计算结果是安全的。这是因为，这个数超出了精度范围，导致在计算机内部，以`9007199254740992`的形式储存。
+上面代碼中，`9007199254740993`不是一個安全整數，但是`Number.isSafeInteger`會返回結果，顯示計算結果是安全的。這是因為，這個數超出了精度範圍，導致在計算機內部，以`9007199254740992`的形式儲存。
 
 ```javascript
 9007199254740993 === 9007199254740992
 // true
 ```
 
-所以，如果只验证运算结果是否为安全整数，很可能得到错误结果。下面的函数可以同时验证两个运算数和运算结果。
+所以，如果只驗證運算結果是否為安全整數，很可能得到錯誤結果。下面的函數可以同時驗證兩個運算數和運算結果。
 
 ```javascript
 function trusty (left, right, result) {
@@ -308,13 +308,13 @@ trusty(1, 2, 3)
 // 3
 ```
 
-## Math 对象的扩展
+## Math 物件的擴展
 
-ES6 在 Math 对象上新增了 17 个与数学相关的方法。所有这些方法都是静态方法，只能在 Math 对象上调用。
+ES6 在 Math 物件上新增了 17 個與數學相關的方法。所有這些方法都是靜態方法，只能在 Math 物件上調用。
 
 ### Math.trunc()
 
-`Math.trunc`方法用于去除一个数的小数部分，返回整数部分。
+`Math.trunc`方法用於去除一個數的小數部分，返回整數部分。
 
 ```javascript
 Math.trunc(4.1) // 4
@@ -324,7 +324,7 @@ Math.trunc(-4.9) // -4
 Math.trunc(-0.1234) // -0
 ```
 
-对于非数值，`Math.trunc`内部使用`Number`方法将其先转为数值。
+對於非數值，`Math.trunc`內部使用`Number`方法將其先轉為數值。
 
 ```javascript
 Math.trunc('123.456') // 123
@@ -333,7 +333,7 @@ Math.trunc(false) // 0
 Math.trunc(null) // 0
 ```
 
-对于空值和无法截取整数的值，返回`NaN`。
+對於空值和無法截取整數的值，返回`NaN`。
 
 ```javascript
 Math.trunc(NaN);      // NaN
@@ -342,7 +342,7 @@ Math.trunc();         // NaN
 Math.trunc(undefined) // NaN
 ```
 
-对于没有部署这个方法的环境，可以用下面的代码模拟。
+對於沒有部署這個方法的環境，可以用下面的代碼模擬。
 
 ```javascript
 Math.trunc = Math.trunc || function(x) {
@@ -352,14 +352,14 @@ Math.trunc = Math.trunc || function(x) {
 
 ### Math.sign()
 
-`Math.sign`方法用来判断一个数到底是正数、负数、还是零。对于非数值，会先将其转换为数值。
+`Math.sign`方法用來判斷一個數到底是正數、負數、還是零。對於非數值，會先將其轉換為數值。
 
-它会返回五种值。
+它會返回五種值。
 
-- 参数为正数，返回`+1`；
-- 参数为负数，返回`-1`；
-- 参数为 0，返回`0`；
-- 参数为-0，返回`-0`;
+- 參數為正數，返回`+1`；
+- 參數為負數，返回`-1`；
+- 參數為 0，返回`0`；
+- 參數為-0，返回`-0`;
 - 其他值，返回`NaN`。
 
 ```javascript
@@ -370,7 +370,7 @@ Math.sign(-0) // -0
 Math.sign(NaN) // NaN
 ```
 
-如果参数是非数值，会自动转为数值。对于那些无法转为数值的值，会返回`NaN`。
+如果參數是非數值，會自動轉為數值。對於那些無法轉為數值的值，會返回`NaN`。
 
 ```javascript
 Math.sign('')  // 0
@@ -383,7 +383,7 @@ Math.sign()  // NaN
 Math.sign(undefined)  // NaN
 ```
 
-对于没有部署这个方法的环境，可以用下面的代码模拟。
+對於沒有部署這個方法的環境，可以用下面的代碼模擬。
 
 ```javascript
 Math.sign = Math.sign || function(x) {
@@ -397,7 +397,7 @@ Math.sign = Math.sign || function(x) {
 
 ### Math.cbrt()
 
-`Math.cbrt`方法用于计算一个数的立方根。
+`Math.cbrt`方法用於計算一個數的立方根。
 
 ```javascript
 Math.cbrt(-1) // -1
@@ -406,14 +406,14 @@ Math.cbrt(1)  // 1
 Math.cbrt(2)  // 1.2599210498948734
 ```
 
-对于非数值，`Math.cbrt`方法内部也是先使用`Number`方法将其转为数值。
+對於非數值，`Math.cbrt`方法內部也是先使用`Number`方法將其轉為數值。
 
 ```javascript
 Math.cbrt('8') // 2
 Math.cbrt('hello') // NaN
 ```
 
-对于没有部署这个方法的环境，可以用下面的代码模拟。
+對於沒有部署這個方法的環境，可以用下面的代碼模擬。
 
 ```javascript
 Math.cbrt = Math.cbrt || function(x) {
@@ -424,7 +424,7 @@ Math.cbrt = Math.cbrt || function(x) {
 
 ### Math.clz32()
 
-JavaScript 的整数使用 32 位二进制形式表示，`Math.clz32`方法返回一个数的 32 位无符号整数形式有多少个前导 0。
+JavaScript 的整數使用 32 位二進制形式表示，`Math.clz32`方法返回一個數的 32 位無符號整數形式有多少個前導 0。
 
 ```javascript
 Math.clz32(0) // 32
@@ -434,11 +434,11 @@ Math.clz32(0b01000000000000000000000000000000) // 1
 Math.clz32(0b00100000000000000000000000000000) // 2
 ```
 
-上面代码中，0 的二进制形式全为 0，所以有 32 个前导 0；1 的二进制形式是`0b1`，只占 1 位，所以 32 位之中有 31 个前导 0；1000 的二进制形式是`0b1111101000`，一共有 10 位，所以 32 位之中有 22 个前导 0。
+上面代碼中，0 的二進制形式全為 0，所以有 32 個前導 0；1 的二進制形式是`0b1`，只佔 1 位，所以 32 位之中有 31 個前導 0；1000 的二進制形式是`0b1111101000`，一共有 10 位，所以 32 位之中有 22 個前導 0。
 
-`clz32`这个函数名就来自”count leading zero bits in 32-bit binary representation of a number“（计算一个数的 32 位二进制形式的前导 0 的个数）的缩写。
+`clz32`這個函數名就來自”count leading zero bits in 32-bit binary representation of a number“（計算一個數的 32 位二進制形式的前導 0 的個數）的縮寫。
 
-左移运算符（`<<`）与`Math.clz32`方法直接相关。
+左移運算符（`<<`）與`Math.clz32`方法直接相關。
 
 ```javascript
 Math.clz32(0) // 32
@@ -448,14 +448,14 @@ Math.clz32(1 << 2) // 29
 Math.clz32(1 << 29) // 2
 ```
 
-对于小数，`Math.clz32`方法只考虑整数部分。
+對於小數，`Math.clz32`方法只考慮整數部分。
 
 ```javascript
 Math.clz32(3.2) // 30
 Math.clz32(3.9) // 30
 ```
 
-对于空值或其他类型的值，`Math.clz32`方法会将它们先转为数值，然后再计算。
+對於空值或其他類型的值，`Math.clz32`方法會將它們先轉為數值，然後再計算。
 
 ```javascript
 Math.clz32() // 32
@@ -470,7 +470,7 @@ Math.clz32(true) // 31
 
 ### Math.imul()
 
-`Math.imul`方法返回两个数以 32 位带符号整数形式相乘的结果，返回的也是一个 32 位的带符号整数。
+`Math.imul`方法返回兩個數以 32 位帶符號整數形式相乘的結果，返回的也是一個 32 位的帶符號整數。
 
 ```javascript
 Math.imul(2, 4)   // 8
@@ -478,13 +478,13 @@ Math.imul(-1, 8)  // -8
 Math.imul(-2, -2) // 4
 ```
 
-如果只考虑最后 32 位，大多数情况下，`Math.imul(a, b)`与`a * b`的结果是相同的，即该方法等同于`(a * b)|0`的效果（超过 32 位的部分溢出）。之所以需要部署这个方法，是因为 JavaScript 有精度限制，超过 2 的 53 次方的值无法精确表示。这就是说，对于那些很大的数的乘法，低位数值往往都是不精确的，`Math.imul`方法可以返回正确的低位数值。
+如果只考慮最後 32 位，大多數情況下，`Math.imul(a, b)`與`a * b`的結果是相同的，即該方法等同於`(a * b)|0`的效果（超過 32 位的部分溢出）。之所以需要部署這個方法，是因為 JavaScript 有精度限制，超過 2 的 53 次方的值無法精確表示。這就是說，對於那些很大的數的乘法，低位數值往往都是不精確的，`Math.imul`方法可以返回正確的低位數值。
 
 ```javascript
 (0x7fffffff * 0x7fffffff)|0 // 0
 ```
 
-上面这个乘法算式，返回结果为 0。但是由于这两个二进制数的最低位都是 1，所以这个结果肯定是不正确的，因为根据二进制乘法，计算结果的二进制最低位应该也是 1。这个错误就是因为它们的乘积超过了 2 的 53 次方，JavaScript 无法保存额外的精度，就把低位的值都变成了 0。`Math.imul`方法可以返回正确的值 1。
+上面這個乘法算式，返回結果為 0。但是由於這兩個二進制數的最低位都是 1，所以這個結果肯定是不正確的，因為根據二進制乘法，計算結果的二進制最低位應該也是 1。這個錯誤就是因為它們的乘積超過了 2 的 53 次方，JavaScript 無法保存額外的精度，就把低位的值都變成了 0。`Math.imul`方法可以返回正確的值 1。
 
 ```javascript
 Math.imul(0x7fffffff, 0x7fffffff) // 1
@@ -492,37 +492,37 @@ Math.imul(0x7fffffff, 0x7fffffff) // 1
 
 ### Math.fround()
 
-`Math.fround`方法返回一个数的32位单精度浮点数形式。
+`Math.fround`方法返回一個數的32位單精度浮點數形式。
 
-对于32位单精度格式来说，数值精度是24个二进制位（1 位隐藏位与 23 位有效位），所以对于 -2<sup>24</sup> 至 2<sup>24</sup> 之间的整数（不含两个端点），返回结果与参数本身一致。
+對於32位單精度格式來說，數值精度是24個二進制位（1 位隱藏位與 23 位有效位），所以對於 -2<sup>24</sup> 至 2<sup>24</sup> 之間的整數（不含兩個端點），返回結果與參數本身一致。
 
 ```javascript
 Math.fround(0)   // 0
-Math.fround(1)   // 1
+Math.fround(1)   // 1
 Math.fround(2 ** 24 - 1)   // 16777215
 ```
 
-如果参数的绝对值大于 2<sup>24</sup>，返回的结果便开始丢失精度。
+如果參數的絕對值大於 2<sup>24</sup>，返回的結果便開始丟失精度。
 
 ```javascript
 Math.fround(2 ** 24)       // 16777216
 Math.fround(2 ** 24 + 1)   // 16777216
 ```
 
-`Math.fround`方法的主要作用，是将64位双精度浮点数转为32位单精度浮点数。如果小数的精度超过24个二进制位，返回值就会不同于原值，否则返回值不变（即与64位双精度值一致）。
+`Math.fround`方法的主要作用，是將64位雙精度浮點數轉為32位單精度浮點數。如果小數的精度超過24個二進制位，返回值就會不同於原值，否則返回值不變（即與64位雙精度值一致）。
 
 ```javascript
-// 未丢失有效精度
+// 未丟失有效精度
 Math.fround(1.125) // 1.125
 Math.fround(7.25)  // 7.25
 
-// 丢失精度
-Math.fround(0.3)   // 0.30000001192092896
-Math.fround(0.7)   // 0.699999988079071
+// 丟失精度
+Math.fround(0.3)   // 0.30000001192092896
+Math.fround(0.7)   // 0.699999988079071
 Math.fround(1.0000000123) // 1
 ```
 
-对于 `NaN` 和 `Infinity`，此方法返回原值。对于其它类型的非数值，`Math.fround` 方法会先将其转为数值，再返回单精度浮点数。
+對於 `NaN` 和 `Infinity`，此方法返回原值。對於其它類型的非數值，`Math.fround` 方法會先將其轉為數值，再返回單精度浮點數。
 
 ```javascript
 Math.fround(NaN)      // NaN
@@ -535,7 +535,7 @@ Math.fround([])       // 0
 Math.fround({})       // NaN
 ```
 
-对于没有部署这个方法的环境，可以用下面的代码模拟。
+對於沒有部署這個方法的環境，可以用下面的代碼模擬。
 
 ```javascript
 Math.fround = Math.fround || function (x) {
@@ -545,7 +545,7 @@ Math.fround = Math.fround || function (x) {
 
 ### Math.hypot()
 
-`Math.hypot`方法返回所有参数的平方和的平方根。
+`Math.hypot`方法返回所有參數的平方和的平方根。
 
 ```javascript
 Math.hypot(3, 4);        // 5
@@ -557,13 +557,13 @@ Math.hypot(3, 4, '5');   // 7.0710678118654755
 Math.hypot(-3);          // 3
 ```
 
-上面代码中，3 的平方加上 4 的平方，等于 5 的平方。
+上面代碼中，3 的平方加上 4 的平方，等於 5 的平方。
 
-如果参数不是数值，`Math.hypot`方法会将其转为数值。只要有一个参数无法转为数值，就会返回 NaN。
+如果參數不是數值，`Math.hypot`方法會將其轉為數值。只要有一個參數無法轉為數值，就會返回 NaN。
 
-### 对数方法
+### 對數方法
 
-ES6 新增了 4 个对数相关方法。
+ES6 新增了 4 個對數相關方法。
 
 **（1） Math.expm1()**
 
@@ -575,7 +575,7 @@ Math.expm1(0)  // 0
 Math.expm1(1)  // 1.718281828459045
 ```
 
-对于没有部署这个方法的环境，可以用下面的代码模拟。
+對於沒有部署這個方法的環境，可以用下面的代碼模擬。
 
 ```javascript
 Math.expm1 = Math.expm1 || function(x) {
@@ -585,7 +585,7 @@ Math.expm1 = Math.expm1 || function(x) {
 
 **（2）Math.log1p()**
 
-`Math.log1p(x)`方法返回`1 + x`的自然对数，即`Math.log(1 + x)`。如果`x`小于-1，返回`NaN`。
+`Math.log1p(x)`方法返回`1 + x`的自然對數，即`Math.log(1 + x)`。如果`x`小於-1，返回`NaN`。
 
 ```javascript
 Math.log1p(1)  // 0.6931471805599453
@@ -594,7 +594,7 @@ Math.log1p(-1) // -Infinity
 Math.log1p(-2) // NaN
 ```
 
-对于没有部署这个方法的环境，可以用下面的代码模拟。
+對於沒有部署這個方法的環境，可以用下面的代碼模擬。
 
 ```javascript
 Math.log1p = Math.log1p || function(x) {
@@ -604,7 +604,7 @@ Math.log1p = Math.log1p || function(x) {
 
 **（3）Math.log10()**
 
-`Math.log10(x)`返回以 10 为底的`x`的对数。如果`x`小于 0，则返回 NaN。
+`Math.log10(x)`返回以 10 為底的`x`的對數。如果`x`小於 0，則返回 NaN。
 
 ```javascript
 Math.log10(2)      // 0.3010299956639812
@@ -614,7 +614,7 @@ Math.log10(-2)     // NaN
 Math.log10(100000) // 5
 ```
 
-对于没有部署这个方法的环境，可以用下面的代码模拟。
+對於沒有部署這個方法的環境，可以用下面的代碼模擬。
 
 ```javascript
 Math.log10 = Math.log10 || function(x) {
@@ -624,7 +624,7 @@ Math.log10 = Math.log10 || function(x) {
 
 **（4）Math.log2()**
 
-`Math.log2(x)`返回以 2 为底的`x`的对数。如果`x`小于 0，则返回 NaN。
+`Math.log2(x)`返回以 2 為底的`x`的對數。如果`x`小於 0，則返回 NaN。
 
 ```javascript
 Math.log2(3)       // 1.584962500721156
@@ -636,7 +636,7 @@ Math.log2(1024)    // 10
 Math.log2(1 << 29) // 29
 ```
 
-对于没有部署这个方法的环境，可以用下面的代码模拟。
+對於沒有部署這個方法的環境，可以用下面的代碼模擬。
 
 ```javascript
 Math.log2 = Math.log2 || function(x) {
@@ -644,39 +644,39 @@ Math.log2 = Math.log2 || function(x) {
 };
 ```
 
-### 双曲函数方法
+### 雙曲函數方法
 
-ES6 新增了 6 个双曲函数方法。
+ES6 新增了 6 個雙曲函數方法。
 
-- `Math.sinh(x)` 返回`x`的双曲正弦（hyperbolic sine）
-- `Math.cosh(x)` 返回`x`的双曲余弦（hyperbolic cosine）
-- `Math.tanh(x)` 返回`x`的双曲正切（hyperbolic tangent）
-- `Math.asinh(x)` 返回`x`的反双曲正弦（inverse hyperbolic sine）
-- `Math.acosh(x)` 返回`x`的反双曲余弦（inverse hyperbolic cosine）
-- `Math.atanh(x)` 返回`x`的反双曲正切（inverse hyperbolic tangent）
+- `Math.sinh(x)` 返回`x`的雙曲正弦（hyperbolic sine）
+- `Math.cosh(x)` 返回`x`的雙曲餘弦（hyperbolic cosine）
+- `Math.tanh(x)` 返回`x`的雙曲正切（hyperbolic tangent）
+- `Math.asinh(x)` 返回`x`的反雙曲正弦（inverse hyperbolic sine）
+- `Math.acosh(x)` 返回`x`的反雙曲餘弦（inverse hyperbolic cosine）
+- `Math.atanh(x)` 返回`x`的反雙曲正切（inverse hyperbolic tangent）
 
-## 指数运算符
+## 指數運算符
 
-ES2016 新增了一个指数运算符（`**`）。
+ES2016 新增了一個指數運算符（`**`）。
 
 ```javascript
 2 ** 2 // 4
 2 ** 3 // 8
 ```
 
-指数运算符可以与等号结合，形成一个新的赋值运算符（`**=`）。
+指數運算符可以與等號結合，形成一個新的賦值運算符（`**=`）。
 
 ```javascript
 let a = 1.5;
 a **= 2;
-// 等同于 a = a * a;
+// 等同於 a = a * a;
 
 let b = 4;
 b **= 3;
-// 等同于 b = b * b * b;
+// 等同於 b = b * b * b;
 ```
 
-注意，在 V8 引擎中，指数运算符与`Math.pow`的实现不相同，对于特别大的运算结果，两者会有细微的差异。
+注意，在 V8 引擎中，指數運算符與`Math.pow`的實現不相同，對於特別大的運算結果，兩者會有細微的差異。
 
 ```javascript
 Math.pow(99, 99)
@@ -686,4 +686,4 @@ Math.pow(99, 99)
 // 3.697296376497268e+197
 ```
 
-上面代码中，两个运算结果的最后一位有效数字是有差异的。
+上面代碼中，兩個運算結果的最後一位有效數字是有差異的。
